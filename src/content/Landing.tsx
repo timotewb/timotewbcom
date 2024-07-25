@@ -25,7 +25,7 @@ function Landing() {
             setShouldFadeOut(false);
           }, 2000); // Delay to allow fade-out animation
         }
-      }, [keyString]);
+      }, [keyString, canChange]);
 
   return (
     <p>
