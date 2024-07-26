@@ -1,13 +1,19 @@
 .App {
   text-align: center;
-  font-family: 'Courier New', monospace;
-  font-size: 100pt;
+  font-family: "Courier New", monospace;
+  font-size: 5em;
   color: #000939;
 }
-.fade-in-greeting { animation: fadeIn 5s; }
+.fade-in-greeting {
+  animation: fadeIn 5s;
+}
 @keyframes fadeIn {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 .fadeIn {
@@ -15,6 +21,10 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
