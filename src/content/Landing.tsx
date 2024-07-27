@@ -3,7 +3,6 @@ import useGlobalKeyboardListener from "./useGlobalKeyboardListener";
 import "./Landing.css";
 
 function Landing() {
-  console.log("Hello, thank you for visiting my site. I hope you enjoy.");
   const [displayText, setDisplayText] = useState<string>("chur");
   const [keyString, setKeyString] = useState<string>("");
   const [shouldFadeOut, setShouldFadeOut] = useState<boolean>(false);
