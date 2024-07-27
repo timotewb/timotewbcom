@@ -9,11 +9,28 @@ function Landing() {
   const [shouldFadeOut, setShouldFadeOut] = useState<boolean>(false);
   const [canChange, setCanChange] = useState<boolean>(true);
   const [showAnimation, setShowAnimation] = useState<boolean>(false);
+  const [canEat, setCanEat] = useState<boolean>(false);
 
   const addSpan = (note: string) => {
-    return note
-      .split("")
-      .map((letter, index) => <span key={index}>{letter}</span>);
+    type SpanStyleType = {
+      animationDelay?: string;
+      paddingLeft?: string;
+      // Add any other CSS properties you plan to use here
+    };
+    return note.split("").map((letter, index) => {
+      index = index / 2;
+      let spanStyle: SpanStyleType = { animationDelay: `${index}s` };
+      // Check if the letter is a whitespace character and adjust styling if needed
+      if (/[\s]/.test(letter)) {
+        spanStyle = { ...spanStyle, paddingLeft: ".5em" };
+        letter = "";
+      }
+      return (
+        <span style={spanStyle} key={index}>
+          {letter}
+        </span>
+      );
+    });
   };
 
   useGlobalKeyboardListener((event, currentKey) => {
@@ -29,28 +46,33 @@ function Landing() {
       setCanChange(false);
       setShouldFadeOut(true);
       setShowAnimation(true);
+
+      // wait for initial text to fadeOut, then start fadeIn of new text
       setTimeout(() => {
-        setDisplayText("chur bro"); // Change to the next text after delay
+        setDisplayText("chur bro");
         setShouldFadeOut(false);
-      }, 2000); // Delay to allow fade-out animation
+      }, 2000);
+
+      // Once new text is displayed, start eating
+      setTimeout(() => {
+        setCanEat(true);
+      }, 7000);
     }
-  }, [keyString, canChange, showAnimation]);
+  }, [keyString, canChange, showAnimation, canEat]);
 
   return (
     <>
-      <div className="container">
-        {showAnimation && (
-          <span className="pacman">
-            <span className="pacman__mouth"></span>
+      <div className="Content">
+        <div className="landingH1">
+          <span
+            className={` ${
+              shouldFadeOut ? "landingH1-fadeOut" : "landingH1-fadeIn"
+            } ${canEat ? "eatwords" : ""} `}
+          >
+            {addSpan(displayText)}
           </span>
-        )}
-
-        <span className={`fade ${shouldFadeOut ? "fade-out" : ""}`}>
-          {displayText}
-        </span>
+        </div>
       </div>
-
-      <p className="animatedtext">{addSpan("hello world")}</p>
     </>
   );
 }

@@ -1,16 +1,28 @@
-.container {
-  position: relative;
+.Content {
+  display: flex;
+  padding: 1.25rem;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.625rem;
+  align-self: stretch;
 }
 
-.fade {
-  position: absolute;
-  margin-top: 20px;
-  left: 0;
-  right: 0;
-  z-index: 0;
-  animation: fadeIn 3s forwards; /* Initial fade-in for 'hello' */
+.landingH1 {
+  align-self: stretch;
+  text-align: center;
+  font-family: "Courier New";
+  font-size: 3.125rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
 }
 
+/*----------------------------------------------------------------------------------------*/
+/* fade in, fade out landingH1 */
+/*----------------------------------------------------------------------------------------*/
+.landingH1-fadeIn {
+  animation: fadeIn 2s forwards;
+}
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -19,16 +31,9 @@
     opacity: 1;
   }
 }
-
-.fade-out {
-  position: absolute;
-  margin-top: 20px;
-  left: 0;
-  right: 0;
-  z-index: 0;
-  animation: fadeOut 2s forwards; /* Fade-out triggered by matching input */
+.landingH1-fadeOut {
+  animation: fadeOut 2s forwards;
 }
-
 @keyframes fadeOut {
   from {
     opacity: 1;
@@ -38,66 +43,22 @@
   }
 }
 
-.pacman {
-  position: absolute;
-  top: 50%;
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  background: #000939;
-  margin-top: 20px;
-  animation-name: eatmove;
-  animation-duration: 3s;
-  animation-delay: 4s;
-  z-index: 1;
-}
-.pacman__mouth {
-  background: #27ee3e;
-  position: absolute;
-  left: 1%;
-  width: 100%;
-  height: 100%;
-  clip-path: polygon(100% 74%, 44% 48%, 100% 21%);
-  animation-name: eat;
-  animation-duration: 0.7s;
-  animation-iteration-count: infinite;
-}
-@keyframes eat {
-  0% {
-    clip-path: polygon(100% 74%, 44% 48%, 100% 21%);
-  }
-  25% {
-    clip-path: polygon(100% 60%, 44% 48%, 100% 40%);
-  }
-  50% {
-    clip-path: polygon(100% 50%, 44% 48%, 100% 50%);
-  }
-  75% {
-    clip-path: polygon(100% 59%, 44% 48%, 100% 35%);
-  }
-  100% {
-    clip-path: polygon(100% 74%, 44% 48%, 100% 21%);
-  }
-}
-
-@keyframes eatmove {
-  from {
-    left: 33%;
-  }
-  to {
-    left: 66%;
-  }
-}
-
-
-
-
-
-.animatedtext span {
+/*----------------------------------------------------------------------------------------*/
+/* eat words */
+/*----------------------------------------------------------------------------------------*/
+.eatwords span {
   display: inline-block;
-  animation: fadeOutText 2s steps(11, end); 
+  animation: fadeOut 0.1s forwards;
 }
-@keyframes fadeOutText {
-  from { opacity: 1; }
-  to { opacity: 0; }
+/* .eatwords span:nth-child(1) {
+  animation-delay: 0s;
 }
+.eatwords span:nth-child(2) {
+  animation-delay: 1s;
+}
+.eatwords span:nth-child(3) {
+  animation-delay: 2s;
+}
+.eatwords span:nth-child(4) {
+  animation-delay: 3s;
+} */
