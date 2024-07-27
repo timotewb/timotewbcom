@@ -10,6 +10,12 @@ function Landing() {
   const [canChange, setCanChange] = useState<boolean>(true);
   const [showAnimation, setShowAnimation] = useState<boolean>(false);
 
+  const addSpan = (note: string) => {
+    return note
+      .split("")
+      .map((letter, index) => <span key={index}>{letter}</span>);
+  };
+
   useGlobalKeyboardListener((event, currentKey) => {
     if (keyString.length > 100) {
       setKeyString("");
@@ -31,17 +37,21 @@ function Landing() {
   }, [keyString, canChange, showAnimation]);
 
   return (
-    <p>
-      {showAnimation && (
-        <div className="pacman">
-          <div className="pacman__mouth"></div>
-        </div>
-      )}
+    <>
+      <div className="container">
+        {showAnimation && (
+          <span className="pacman">
+            <span className="pacman__mouth"></span>
+          </span>
+        )}
 
-      <span className={`fade ${shouldFadeOut ? "fade-out" : ""}`}>
-        {displayText}
-      </span>
-    </p>
+        <span className={`fade ${shouldFadeOut ? "fade-out" : ""}`}>
+          {displayText}
+        </span>
+      </div>
+
+      <p className="animatedtext">{addSpan("hello world")}</p>
+    </>
   );
 }
 
