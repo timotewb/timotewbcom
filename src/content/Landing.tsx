@@ -14,10 +14,10 @@ function Landing() {
     type SpanStyleType = {
       animationDelay?: string;
       paddingLeft?: string;
-      // Add any other CSS properties you plan to use here
     };
+    const delay = 1;
     return note.split("").map((letter, index) => {
-      index = index / 2;
+      index = index / 2 + delay;
       let spanStyle: SpanStyleType = { animationDelay: `${index}s` };
       // Check if the letter is a whitespace character and adjust styling if needed
       if (/[\s]/.test(letter)) {
@@ -30,6 +30,16 @@ function Landing() {
         </span>
       );
     });
+  };
+
+  const paku = () => {
+    return (
+      <div className="pakuContainer">
+        <div id="paku">
+          <div id="kuchi"></div>
+        </div>
+      </div>
+    );
   };
 
   useGlobalKeyboardListener((event, currentKey) => {
@@ -71,6 +81,7 @@ function Landing() {
             {addSpan(displayText)}
           </span>
         </div>
+        {canEat ? paku() : null}
       </div>
     </>
   );

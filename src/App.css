@@ -2,6 +2,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: #fffaf0;
-  color: #001c55;
+  background: var(--cp-background);
+  color: var(--cp-text);
 }
