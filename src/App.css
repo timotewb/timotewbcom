@@ -2,6 +2,50 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: var(--cp-background);
-  color: var(--cp-text);
+  flex: 1 0 0;
+  align-self: stretch;
+
+  border-radius: var(--border-radius);
+  background: var(--cp-main);
+}
+
+.App-header {
+  display: flex;
+  height: 2.5rem;
+  padding: 0rem 28.25rem;
+  justify-content: center;
+  align-items: center;
+  gap: 0.625rem;
+  align-self: stretch;
+  border-radius: var(--border-radius) var(--border-radius) 0rem 0rem;
+  background: var(--cp-accent1);
+}
+
+.App-greeting {
+  color: var(--cp-main);
+  font-size: 1.5rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
+
+.App-input-container {
+  display: flex;
+  align-self: stretch;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.625rem;
+}
+
+.App-input-text {
+  display: flex;
+  align-self: stretch;
+  padding: 0.625rem;
+  align-items: flex-start;
+  overflow-wrap: anywhere;
+}
+
+.App-input-prfx {
+  font-style: normal;
+  color: var(--cp-background);
 }
