@@ -2,10 +2,10 @@ import React, { useState, useRef } from "react";
 import "./App.css";
 
 function App() {
-  const prefix = "<span className='App-input-prfx'>?></span>";
+  const prefix = '<span className="App-input-prfx">?></span>';
   const suffix = "<span className='App-input-prfx'>|</span>";
   const inputRef = useRef<HTMLInputElement>(null);
-  const [inputText, setInputText] = useState(`${prefix}`);
+  const [inputText, setInputText] = useState("");
 
   const handleInputChange = (event: React.FormEvent<HTMLDivElement>) => {
     let newValue = "";
@@ -16,6 +16,12 @@ function App() {
     }
     setInputText(newValue);
   };
+
+  const prefixText = () => (
+    <>
+    <span className="App-input-prfx">?&gt;</span> {inputText}
+    </>
+  );
 
   return (
     <div className="App">
@@ -28,9 +34,7 @@ function App() {
           contentEditable
           tabIndex={0}
           onChange={handleInputChange}
-          // onKeyDown={handleInputChange}
-          dangerouslySetInnerHTML={{ __html: inputText }}
-        ></div>
+        >{prefixText()}{inputText}</div>
       </div>
     </div>
   );
