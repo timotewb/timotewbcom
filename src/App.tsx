@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "./App.css";
 
 function readFromClipboard(): Promise<string | undefined> {
@@ -15,10 +15,7 @@ function readFromClipboard(): Promise<string | undefined> {
 async function writeToClipboard(text: string) {
   try {
     await navigator.clipboard.writeText(text);
-    console.log("Text written to clipboard: ", text);
-  } catch (err) {
-    console.error("Failed to write text: ", err);
-  }
+  } catch (err) {}
 }
 
 function App() {
@@ -41,7 +38,7 @@ function App() {
     if (userInput.startsWith(promptStr)) {
       setCommand(userInput);
     } else {
-      if (firstChar == promptStr[0] && secondChar != promptStr[1]) {
+      if (firstChar === promptStr[0] && secondChar !== promptStr[1]) {
         setCommand(promptStr + userInput.slice(1));
       } else if (userInput === "") {
         setCommand(promptStr);
