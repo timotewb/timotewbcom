@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import "./App.css";
 
 function readFromClipboard(): Promise<string | undefined> {
@@ -23,11 +23,15 @@ async function writeToClipboard(text: string) {
 
 function App() {
   const promptStr = "?> ";
+  const maxTerminalHistory = 100;
   const [command, setCommand] = useState(promptStr);
   const [history, setHistory] = useState<string[]>([]);
   const inputTextRef = useRef<HTMLDivElement>(null);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
+  //----------------------------------------------------------------------------------------
+  // user input and keybaord events
+  //----------------------------------------------------------------------------------------
   // monitor what the user is entering into the command
   const handleCommandChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     // test for chagnes to the prefix
@@ -52,24 +56,26 @@ function App() {
     e.preventDefault();
   };
 
+  //----------------------------------------------------------------------------------------
+  // mouse events
+  //----------------------------------------------------------------------------------------
   // catch right click
   const handleRightClick = async (event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
 
-    // Check if there's selected text and copy or paste to
+    // Check if there's selected text then copy
     if (window.getSelection()?.toString().trim() !== "") {
       const sel = window.getSelection();
       if (sel !== null && sel.getRangeAt && sel.rangeCount) {
         const selection = window.getSelection()?.toString();
-        if (selection) {
-          // write selection to clipbaord
-          try {
-            await writeToClipboard(selection);
-          } catch (error) {
-            console.error("Error reading clipboard:", error);
-          }
-          sel.removeRange(sel.getRangeAt(0));
+
+        // write selection to clipbaord
+        try {
+          await writeToClipboard(selection || "");
+        } catch (error) {
+          console.error("handleRightClick():", error);
         }
+        sel.removeRange(sel.getRangeAt(0));
       }
     } else {
       try {
@@ -77,11 +83,14 @@ function App() {
         const clipboardText = await readFromClipboard();
         setCommand(command + clipboardText);
       } catch (error) {
-        console.error("Error reading clipboard:", error);
+        console.error("handleRightClick():", error);
       }
     }
   };
 
+  //----------------------------------------------------------------------------------------
+  // terminal behaviour
+  //----------------------------------------------------------------------------------------
   // scroll up when the user hits the bottom
   useEffect(() => {
     setTimeout(() => {
@@ -104,11 +113,22 @@ function App() {
     }
   }, [command]);
 
-  // take input and execute based on value
+  // limit terminal history to 100 rows
+  useEffect(() => {
+    if (history.length > maxTerminalHistory) {
+      setHistory(history.slice(-maxTerminalHistory));
+    }
+  }, [history]);
+
+  //----------------------------------------------------------------------------------------
+  // command execution
+  //----------------------------------------------------------------------------------------
   const executeCommand = () => {
-    if (command.trim().toLowerCase() === promptStr + "clear") {
+    let escapedPrefix = promptStr.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const cmd = command.trim().replace(new RegExp("^" + escapedPrefix), "");
+    if (cmd === "clear") {
       setHistory([]);
-    } else if (command.trim().toLowerCase() === promptStr + "help") {
+    } else if (cmd === "help") {
       setHistory((prevHistory) => [...prevHistory, command]);
       setHistory((prevHistory) => [
         ...prevHistory,
@@ -116,10 +136,17 @@ function App() {
       ]);
     } else {
       setHistory((prevHistory) => [...prevHistory, command]);
+      setHistory((prevHistory) => [
+        ...prevHistory,
+        cmd + ": command not found",
+      ]);
     }
     setCommand(promptStr);
   };
 
+  //----------------------------------------------------------------------------------------
+  // return
+  //----------------------------------------------------------------------------------------
   return (
     <div className="terminal-container" onContextMenu={handleRightClick}>
       <div className="header">
