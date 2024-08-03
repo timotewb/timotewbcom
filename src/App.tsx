@@ -172,8 +172,33 @@ function App() {
           }}
         />
       </div>
+    <div className="terminal-container" onContextMenu={handleRightClick}>
+      <div className="header">
+        <div className="greeting">welcome</div>
+      </div>
+      <div className="input-container" ref={inputTextRef}>
+        {history.map((item, index) => (
+          <span key={index} dangerouslySetInnerHTML={{ __html: item }}></span>
+        ))}
+        <textarea
+          ref={textAreaRef}
+          className="input-text"
+          contentEditable
+          suppressContentEditableWarning
+          value={command}
+          onChange={handleCommandChange}
+          onCopy={handleCopy}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              executeCommand();
+            }
+          }}
+        />
+      </div>
     </div>
   );
 }
 
 export default App;
+
