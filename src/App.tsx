@@ -1,11 +1,32 @@
 import React, { useState, useRef, useEffect } from "react";
 import "./App.css";
 
+function readFromClipboard(): Promise<string | undefined> {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const text = await navigator.clipboard.readText();
+      resolve(text);
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
+async function writeToClipboard(text: string) {
+  try {
+    await navigator.clipboard.writeText(text);
+    console.log("Text written to clipboard: ", text);
+  } catch (err) {
+    console.error("Failed to write text: ", err);
+  }
+}
+
 function App() {
   const promptStr = "?> ";
   const [command, setCommand] = useState(promptStr);
   const [history, setHistory] = useState<string[]>([]);
   const inputTextRef = useRef<HTMLDivElement>(null);
+  const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
   // monitor what the user is entering into the command
   const handleCommandChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -31,10 +52,55 @@ function App() {
     e.preventDefault();
   };
 
+  // catch right click
+  const handleRightClick = async (event: React.MouseEvent<HTMLDivElement>) => {
+    event.preventDefault();
+
+    // Check if there's selected text and copy or paste to
+    if (window.getSelection()?.toString().trim() !== "") {
+      const sel = window.getSelection();
+      if (sel !== null && sel.getRangeAt && sel.rangeCount) {
+        const selection = window.getSelection()?.toString();
+        if (selection) {
+          // write selection to clipbaord
+          try {
+            await writeToClipboard(selection);
+          } catch (error) {
+            console.error("Error reading clipboard:", error);
+          }
+          sel.removeRange(sel.getRangeAt(0));
+        }
+      }
+    } else {
+      try {
+        // read from clipboard
+        const clipboardText = await readFromClipboard();
+        setCommand(command + clipboardText);
+      } catch (error) {
+        console.error("Error reading clipboard:", error);
+      }
+    }
+  };
+
   // scroll up when the user hits the bottom
   useEffect(() => {
-    if (inputTextRef.current) {
-      inputTextRef.current.scrollTop = inputTextRef.current.scrollHeight;
+    setTimeout(() => {
+      if (inputTextRef.current) {
+        console.log(
+          "inputTextRef.current.scrollHeight:",
+          inputTextRef.current.scrollHeight
+        );
+        inputTextRef.current.scrollTop = inputTextRef.current.scrollHeight;
+      }
+    }, 0);
+  }, [history]);
+
+  useEffect(() => {
+    if (textAreaRef.current) {
+      // Reset the height to auto first
+      textAreaRef.current.style.height = "auto";
+      // Then set the height to the scrollHeight
+      textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`;
     }
   }, [command]);
 
@@ -55,7 +121,7 @@ function App() {
   };
 
   return (
-    <div className="terminal-container">
+    <div className="terminal-container" onContextMenu={handleRightClick}>
       <div className="header">
         <div className="greeting">welcome</div>
       </div>
@@ -64,6 +130,7 @@ function App() {
           <span key={index} dangerouslySetInnerHTML={{ __html: item }}></span>
         ))}
         <textarea
+          ref={textAreaRef}
           className="input-text"
           contentEditable
           suppressContentEditableWarning
