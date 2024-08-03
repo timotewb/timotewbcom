@@ -9,6 +9,11 @@
 body {
   font-family: "Courier New", monospace;
   background: var(--cp-background);
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  width: 100vw;
+  box-sizing: border-box;
 }
 
 #root {
@@ -17,5 +22,6 @@ body {
   flex-direction: column;
   align-items: center;
   gap: 1.25rem;
-  min-height: 500px;
+  height: calc(100vh - 2 * 1.25rem);
+  box-sizing: border-box;
 }

@@ -1,4 +1,4 @@
-.App {
+.terminal-container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -7,9 +7,11 @@
 
   border-radius: var(--border-radius);
   background: var(--cp-main);
+  min-height: 100px; /* Adjusted for demonstration */
+  width: 100%;
 }
 
-.App-header {
+.terminal-container .header {
   display: flex;
   height: 2rem;
   padding: 0rem 28.25rem;
@@ -21,34 +23,39 @@
   background: var(--cp-accent1);
 }
 
-.App-greeting {
+.terminal-container .header .greeting {
   color: var(--cp-main);
   font-size: 1.5rem;
   font-style: normal;
   line-height: normal;
 }
 
-.App-input-container {
+.terminal-container .input-container {
   display: flex;
   align-self: stretch;
   flex-direction: column;
   align-items: flex-start;
-  gap: 0.625rem;
+  padding: 0.5rem;
+  color: var(--cp-background);
+  font-size: 1rem;
+  height: 100%;
+  overflow-y: auto;
 }
 
-.App-input-text {
-  display: flex;
+.terminal-container .input-container .input-text {
+  resize: none;
   align-self: stretch;
-  padding: 0.625rem;
-  align-items: flex-start;
-  overflow-wrap: anywhere;
-  outline: none;
   box-shadow: none;
-  color: var(--cp-background);
-}
+  background-color: transparent;
+  border: none;
+  outline: none;
+  padding: 0;
+  margin: 0;
+  height: 100%;
+  min-height: 1.15rem;
 
-
-.App-input-prfx {
-  font-weight: bold;
+  font-family: "Courier New", monospace;
   color: var(--cp-background);
+  font-size: 1rem;
+  text-align: left;
 }

@@ -2,54 +2,83 @@ import React, { useState, useRef, useEffect } from "react";
 import "./App.css";
 
 function App() {
-  const [command, setCommand] = useState('');
+  const promptStr = "?> ";
+  const [command, setCommand] = useState(promptStr);
   const [history, setHistory] = useState<string[]>([]);
-  const [showHistory, setShowHistory] = useState(false);
+  const inputTextRef = useRef<HTMLDivElement>(null);
 
+  // monitor what the user is entering into the command
   const handleCommandChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setCommand(e.target.value);
+    // test for chagnes to the prefix
+    const userInput = e.target.value;
+    const firstChar = userInput[0];
+    const secondChar = userInput[1];
+    if (userInput.startsWith(promptStr)) {
+      setCommand(userInput);
+    } else {
+      if (firstChar == promptStr[0] && secondChar != promptStr[1]) {
+        setCommand(promptStr + userInput.slice(1));
+      } else if (userInput === "") {
+        setCommand(promptStr);
+      }
+    }
   };
 
-  const executeCommand = () => {
-    if (command.trim().toLowerCase() === 'clear') {
-      setHistory([]);
-    } else {
-      setHistory(prevHistory => [...prevHistory, command]);
-      setCommand('');
+  // catch ctrl-c to "cancel" current line
+  const handleCopy = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    setHistory((prevHistory) => [...prevHistory, command + " ^C"]);
+    setCommand(promptStr);
+    e.preventDefault();
+  };
+
+  // scroll up when the user hits the bottom
+  useEffect(() => {
+    if (inputTextRef.current) {
+      inputTextRef.current.scrollTop = inputTextRef.current.scrollHeight;
     }
-  
-    // Simulate API call
-    fetch(`https://api.example.com/${command}`)
-      .then(response => response.text())
-      .then(data => {
-        // Display data in the terminal
-        console.log(data); // Replace with actual display logic
-      });
+  }, [command]);
+
+  // take input and execute based on value
+  const executeCommand = () => {
+    if (command.trim().toLowerCase() === promptStr + "clear") {
+      setHistory([]);
+    } else if (command.trim().toLowerCase() === promptStr + "help") {
+      setHistory((prevHistory) => [...prevHistory, command]);
+      setHistory((prevHistory) => [
+        ...prevHistory,
+        "Website currently under construction. Please check back soon!",
+      ]);
+    } else {
+      setHistory((prevHistory) => [...prevHistory, command]);
+    }
+    setCommand(promptStr);
   };
 
   return (
-    <>
-<textarea
-  contentEditable
-  suppressContentEditableWarning
-  value={command}
-  onChange={handleCommandChange}
-  onKeyDown={(e) => {
-    if (e.key === 'Enter') {
-      e.preventDefault(); // Prevent form submission
-      executeCommand();
-    }
-  }}
-/>
-{showHistory && (
-  <div>
-    {history.map((cmd, index) => (
-      <p key={index}>{cmd}</p>
-    ))}
-  </div>
-)}
-<button onClick={() => setShowHistory(!showHistory)}>Toggle History</button>
-</>
+    <div className="terminal-container">
+      <div className="header">
+        <div className="greeting">welcome</div>
+      </div>
+      <div className="input-container" ref={inputTextRef}>
+        {history.map((item, index) => (
+          <span key={index} dangerouslySetInnerHTML={{ __html: item }}></span>
+        ))}
+        <textarea
+          className="input-text"
+          contentEditable
+          suppressContentEditableWarning
+          value={command}
+          onChange={handleCommandChange}
+          onCopy={handleCopy}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              executeCommand();
+            }
+          }}
+        />
+      </div>
+    </div>
   );
 }
 
