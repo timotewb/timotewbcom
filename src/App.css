@@ -25,7 +25,6 @@
   color: var(--cp-main);
   font-size: 1.5rem;
   font-style: normal;
-  font-weight: bold;
   line-height: normal;
 }
 
@@ -43,7 +42,11 @@
   padding: 0.625rem;
   align-items: flex-start;
   overflow-wrap: anywhere;
+  outline: none;
+  box-shadow: none;
+  color: var(--cp-background);
 }
+
 
 .App-input-prfx {
   font-weight: bold;

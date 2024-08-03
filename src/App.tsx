@@ -1,42 +1,55 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "./App.css";
 
 function App() {
-  const prefix = '<span className="App-input-prfx">?></span>';
-  const suffix = "<span className='App-input-prfx'>|</span>";
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [inputText, setInputText] = useState("");
+  const [command, setCommand] = useState('');
+  const [history, setHistory] = useState<string[]>([]);
+  const [showHistory, setShowHistory] = useState(false);
 
-  const handleInputChange = (event: React.FormEvent<HTMLDivElement>) => {
-    let newValue = "";
-    if (event.currentTarget.textContent) {
-      console.log(event.currentTarget.textContent);
-      const currentValue = event.currentTarget.textContent;
-      newValue = `${prefix}${currentValue}${suffix}`;
-    }
-    setInputText(newValue);
+  const handleCommandChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setCommand(e.target.value);
   };
 
-  const prefixText = () => (
-    <>
-    <span className="App-input-prfx">?&gt;</span> {inputText}
-    </>
-  );
+  const executeCommand = () => {
+    if (command.trim().toLowerCase() === 'clear') {
+      setHistory([]);
+    } else {
+      setHistory(prevHistory => [...prevHistory, command]);
+      setCommand('');
+    }
+  
+    // Simulate API call
+    fetch(`https://api.example.com/${command}`)
+      .then(response => response.text())
+      .then(data => {
+        // Display data in the terminal
+        console.log(data); // Replace with actual display logic
+      });
+  };
 
   return (
-    <div className="App">
-      <div className="App-header">
-        <div className="App-greeting">welcome</div>
-      </div>
-      <div className="App-input-container">
-        <div
-          className="App-input-text"
-          contentEditable
-          tabIndex={0}
-          onChange={handleInputChange}
-        >{prefixText()}{inputText}</div>
-      </div>
-    </div>
+    <>
+<textarea
+  contentEditable
+  suppressContentEditableWarning
+  value={command}
+  onChange={handleCommandChange}
+  onKeyDown={(e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault(); // Prevent form submission
+      executeCommand();
+    }
+  }}
+/>
+{showHistory && (
+  <div>
+    {history.map((cmd, index) => (
+      <p key={index}>{cmd}</p>
+    ))}
+  </div>
+)}
+<button onClick={() => setShowHistory(!showHistory)}>Toggle History</button>
+</>
   );
 }
 
