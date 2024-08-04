@@ -1,173 +1,60 @@
 import React, { useState, useRef, useEffect } from "react";
 import "./App.css";
 
-function readFromClipboard(): Promise<string | undefined> {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const text = await navigator.clipboard.readText();
-      resolve(text);
-    } catch (error) {
-      reject(error);
-    }
-  });
-}
-
-async function writeToClipboard(text: string) {
-  try {
-    await navigator.clipboard.writeText(text);
-  } catch (err) {}
-}
-
 function App() {
   const promptStr = "?> ";
-  const maxTerminalHistory = 100;
-  const [command, setCommand] = useState(promptStr);
-  const [history, setHistory] = useState<string[]>([]);
-  const inputTextRef = useRef<HTMLDivElement>(null);
-  const textAreaRef = useRef<HTMLTextAreaElement>(null);
+  const [command, setCommand] = useState<string>("");
+  const [history, setHistory] = useState<string[]>([])
+  const terminalInputRef = useRef<HTMLInputElement>(null);
 
-  //----------------------------------------------------------------------------------------
-  // user input and keybaord events
-  //----------------------------------------------------------------------------------------
-  // monitor what the user is entering into the command
-  const handleCommandChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    // test for chagnes to the prefix
-    const userInput = e.target.value;
-    const firstChar = userInput[0];
-    const secondChar = userInput[1];
-    if (userInput.startsWith(promptStr)) {
-      setCommand(userInput);
-    } else {
-      if (firstChar === promptStr[0] && secondChar !== promptStr[1]) {
-        setCommand(promptStr + userInput.slice(1));
-      } else if (userInput === "") {
-        setCommand(promptStr);
-      }
-    }
+  const handleTerminalInput = (event: React.ChangeEvent<HTMLDivElement>) => {
+    console.log(event.target.textContent);
+    setCommand(event.target.textContent||"");
   };
 
-  // catch ctrl-c to "cancel" current line
-  const handleCopy = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
-    setHistory((prevHistory) => [...prevHistory, command + " ^C"]);
-    setCommand(promptStr);
-    e.preventDefault();
-  };
-
-  //----------------------------------------------------------------------------------------
-  // mouse events
-  //----------------------------------------------------------------------------------------
-  // catch right click
-  const handleRightClick = async (event: React.MouseEvent<HTMLDivElement>) => {
-    event.preventDefault();
-
-    // Check if there's selected text then copy
-    if (window.getSelection()?.toString().trim() !== "") {
-      const sel = window.getSelection();
-      if (sel !== null && sel.getRangeAt && sel.rangeCount) {
-        const selection = window.getSelection()?.toString();
-
-        // write selection to clipbaord
-        try {
-          await writeToClipboard(selection || "");
-        } catch (error) {
-          console.error("handleRightClick():", error);
-        }
-        sel.removeRange(sel.getRangeAt(0));
-      }
-    } else {
-      try {
-        // read from clipboard
-        const clipboardText = await readFromClipboard();
-        setCommand(command + clipboardText);
-      } catch (error) {
-        console.error("handleRightClick():", error);
-      }
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key == "Enter"){
+      setHistory([...history, command]);
+      setCommand("");
+      terminalInputRef.current!.innerHTML = "<span>" +promptStr +"</span>";
     }
-  };
-
-  //----------------------------------------------------------------------------------------
-  // terminal behaviour
-  //----------------------------------------------------------------------------------------
-  // scroll up when the user hits the bottom
-  useEffect(() => {
-    setTimeout(() => {
-      if (inputTextRef.current) {
-        console.log(
-          "inputTextRef.current.scrollHeight:",
-          inputTextRef.current.scrollHeight
-        );
-        inputTextRef.current.scrollTop = inputTextRef.current.scrollHeight;
-      }
-    }, 0);
-  }, [history]);
+  }
 
   useEffect(() => {
-    if (textAreaRef.current) {
-      // Reset the height to auto first
-      textAreaRef.current.style.height = "auto";
-      // Then set the height to the scrollHeight
-      textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`;
-    }
-  }, [command]);
-
-  // limit terminal history to 100 rows
-  useEffect(() => {
-    if (history.length > maxTerminalHistory) {
-      setHistory(history.slice(-maxTerminalHistory));
+    if (terminalInputRef.current) {
+      placeCaretAtEnd(terminalInputRef.current);
     }
   }, [history]);
 
-  //----------------------------------------------------------------------------------------
-  // command execution
-  //----------------------------------------------------------------------------------------
-  const executeCommand = () => {
-    let escapedPrefix = promptStr.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    const cmd = command.trim().replace(new RegExp("^" + escapedPrefix), "");
-    if (cmd === "clear") {
-      setHistory([]);
-    } else if (cmd === "help") {
-      setHistory((prevHistory) => [...prevHistory, command]);
-      setHistory((prevHistory) => [
-        ...prevHistory,
-        "Website currently under construction. Please check back soon!",
-      ]);
-    } else {
-      setHistory((prevHistory) => [...prevHistory, command]);
-      setHistory((prevHistory) => [
-        ...prevHistory,
-        cmd + ": command not found",
-      ]);
-    }
-    setCommand(promptStr);
-  };
+  function placeCaretAtEnd(element: HTMLDivElement | null) {
+    if (!element) return;
 
-  //----------------------------------------------------------------------------------------
-  // return
-  //----------------------------------------------------------------------------------------
+    const range = document.createRange();
+    const sel = window.getSelection();
+
+    if (sel) {
+      sel.removeAllRanges();
+      range.selectNodeContents(element);
+      range.collapse(false);
+      sel.addRange(range);
+    }
+
+    // Focusing the editable div
+    element.focus();
+  }
+
   return (
-    <div className="terminal-container" onContextMenu={handleRightClick}>
-      <div className="header">
-        <div className="greeting">welcome</div>
+    <div className="App">
+      <div className='header'>
+        welcome
       </div>
-      <div className="input-container" ref={inputTextRef}>
-        {history.map((item, index) => (
-          <span key={index} dangerouslySetInnerHTML={{ __html: item }}></span>
+      <div className='terminal'>
+      {history.map((item, index) => (
+          <div key={index} className='history'>{item}</div>
         ))}
-        <textarea
-          ref={textAreaRef}
-          className="input-text"
-          contentEditable
-          suppressContentEditableWarning
-          value={command}
-          onChange={handleCommandChange}
-          onCopy={handleCopy}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              executeCommand();
-            }
-          }}
-        />
+        <div ref={terminalInputRef} className='input' contentEditable="true" onInput={handleTerminalInput} onKeyDown={handleKeyDown}>
+        <span>{promptStr}</span>
+        </div>
       </div>
     </div>
   );

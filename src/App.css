@@ -1,62 +1,51 @@
-.terminal-container {
+.App{
+  min-width: 500px;
+  max-width: 1000px;
+  min-height: 500px;
+  height: calc(100vh - 20px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.header {
+  width: 100%;
+  height: 1.5rem;
+  text-align: center;
+
+  border-radius: var(--border-radius, 15px) var(--border-radius, 15px) 0px 0px;
+  font-size: 1rem;
+  background: rgb(253, 146, 146);
+}
+
+.terminal {
+  height: calc(100% - 1.5rem);
+  width: calc(100% - 1rem);
+  padding: .5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   flex: 1 0 0;
   align-self: stretch;
 
-  border-radius: var(--border-radius);
-  background: var(--cp-main);
-  min-height: 100px; /* Adjusted for demonstration */
+
+  border-radius: 0px 0px var(--border-radius, 15px) var(--border-radius, 15px);
+  background: rgb(215, 188, 252);
+}
+
+.terminal .history {
   width: 100%;
-}
-
-.terminal-container .header {
-  display: flex;
-  height: 2rem;
-  padding: 0rem 28.25rem;
-  justify-content: center;
-  align-items: center;
-  gap: 0.625rem;
-  align-self: stretch;
-  border-radius: var(--border-radius) var(--border-radius) 0rem 0rem;
-  background: var(--cp-accent1);
-}
-
-.terminal-container .header .greeting {
-  color: var(--cp-main);
-  font-size: 1.5rem;
-  font-style: normal;
-  line-height: normal;
-}
-
-.terminal-container .input-container {
-  display: flex;
-  align-self: stretch;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 0.5rem;
-  color: var(--cp-background);
-  font-size: 1rem;
-  height: 100%;
-  overflow: auto;
-}
-
-.terminal-container .input-container .input-text {
-  resize: none;
-  align-self: stretch;
-  box-shadow: none;
-  background-color: transparent;
-  border: none;
-  outline: none;
-  padding: 0;
-  margin: 0;
-  min-height: 1.15rem;
-  max-height: 90vh;
-  overflow-y: visible;
-
-  font-family: "Courier New", monospace;
-  color: var(--cp-background);
-  font-size: 1rem;
   text-align: left;
+
+  background: rgb(177, 144, 224);
+}
+
+.terminal .input {
+  height: 100%;
+  width: 100%;
+  outline: none;
+  display: flex;
+  align-items: flex-start;
+
+  background: rgb(229, 210, 255);
 }
