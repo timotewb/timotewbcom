@@ -28,7 +28,6 @@
   flex: 1 0 0;
   align-self: stretch;
 
-
   border-radius: 0px 0px var(--border-radius, 15px) var(--border-radius, 15px);
   background: rgb(215, 188, 252);
 }
@@ -48,4 +47,12 @@
   align-items: flex-start;
 
   background: rgb(229, 210, 255);
+}
+
+.terminal .prompt {
+  position: absolute;
+  left: 1.5rem;
+
+  color: blue;
+  font-weight: bold;
 }

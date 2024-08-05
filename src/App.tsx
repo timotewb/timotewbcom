@@ -3,20 +3,25 @@ import "./App.css";
 
 function App() {
   const promptStr = "?> ";
-  const [command, setCommand] = useState<string>("");
+  const [command, setCommand] = useState<string>("    ");
   const [history, setHistory] = useState<string[]>([])
   const terminalInputRef = useRef<HTMLInputElement>(null);
 
   const handleTerminalInput = (event: React.ChangeEvent<HTMLDivElement>) => {
-    console.log(event.target.textContent);
+
     setCommand(event.target.textContent||"");
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (event.key == "Enter"){
-      setHistory([...history, command]);
-      setCommand("");
-      terminalInputRef.current!.innerHTML = "<span>" +promptStr +"</span>";
+    if (event.key === "Enter"){
+      console.log("command: '"+ command +"'");
+      if (command === "clear"){
+        setHistory([]);
+      } else {
+        setHistory([...history, command]);
+      }
+      setCommand("    ");
+      terminalInputRef.current!.innerHTML = '<span class="prompt">' +promptStr +"</span>";
     }
   }
 
@@ -53,7 +58,8 @@ function App() {
           <div key={index} className='history'>{item}</div>
         ))}
         <div ref={terminalInputRef} className='input' contentEditable="true" onInput={handleTerminalInput} onKeyDown={handleKeyDown}>
-        <span>{promptStr}</span>
+        <span className="prompt">{promptStr}</span>
+        {command}
         </div>
       </div>
     </div>
