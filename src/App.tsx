@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import "./App.css";
+import RunCommand from "./helper/command";
 
 function readFromClipboard(): Promise<string | undefined> {
   return new Promise(async (resolve, reject) => {
@@ -123,6 +124,7 @@ function App() {
   const executeCommand = () => {
     let escapedPrefix = promptStr.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     const cmd = command.trim().replace(new RegExp("^" + escapedPrefix), "");
+    console.log(cmd);
     if (cmd === "clear") {
       setHistory([]);
     } else if (cmd === "help") {
@@ -131,6 +133,21 @@ function App() {
         ...prevHistory,
         "Website currently under construction. Please check back soon!",
       ]);
+    } else if (cmd != "") {
+      const response = RunCommand(cmd);
+      response.then((data) => {
+        console.log(data);
+        if (data.trim() === "") {
+          setHistory((prevHistory) => [...prevHistory, command]);
+          setHistory((prevHistory) => [
+            ...prevHistory,
+            cmd + ": command not found",
+          ]);
+        } else {
+          setHistory((prevHistory) => [...prevHistory, command]);
+          setHistory((prevHistory) => [...prevHistory, data]);
+        }
+      });
     } else {
       setHistory((prevHistory) => [...prevHistory, command]);
       setHistory((prevHistory) => [
