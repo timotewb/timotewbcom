@@ -3,7 +3,7 @@ import "./App.css";
 
 function App() {
   const promptStr = "?> ";
-  const [command, setCommand] = useState<string>("    ");
+  const [command, setCommand] = useState<string>("");
   const [history, setHistory] = useState<string[]>([])
   const terminalInputRef = useRef<HTMLInputElement>(null);
 
@@ -13,15 +13,15 @@ function App() {
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    const cmd = trimPrefix(command, "?>").trim()
     if (event.key === "Enter"){
-      console.log("command: '"+ command +"'");
-      if (command === "clear"){
+      if (cmd === "clear"){
         setHistory([]);
       } else {
-        setHistory([...history, command]);
+        setHistory([...history, cmd]);
       }
-      setCommand("    ");
-      // terminalInputRef.current!.innerHTML = '<span class="prompt">' +promptStr +"</span>";
+      setCommand("");
+      terminalInputRef.current!.innerHTML = '<span class="prompt" contentEditable="false">' +promptStr +"</span>";
     }
   }
 
@@ -29,7 +29,7 @@ function App() {
     if (terminalInputRef.current) {
       placeCaretAtEnd(terminalInputRef.current);
     }
-  }, [history]);
+  }, [history, command]);
 
   function placeCaretAtEnd(element: HTMLDivElement | null) {
     if (!element) return;
@@ -43,7 +43,6 @@ function App() {
       range.collapse(false);
       sel.addRange(range);
     }
-
     // Focusing the editable div
     element.focus();
   }
@@ -55,10 +54,10 @@ function App() {
       </div>
       <div className='terminal'>
       {history.map((item, index) => (
-          <div key={index} className='history'>{item}</div>
+          <div key={index} className='history'><span className="prompt">{promptStr}</span>{item}</div>
         ))}
         <div ref={terminalInputRef} className='input' contentEditable="true" onInput={handleTerminalInput} onKeyDown={handleKeyDown}>
-        <span className="prompt">{promptStr}</span>
+          <span className="prompt" contentEditable="false">{promptStr}</span>
         </div>
       </div>
     </div>
@@ -66,3 +65,11 @@ function App() {
 }
 
 export default App;
+
+function trimPrefix(str: string, prefix: string): string {
+  if (str.startsWith(prefix)) {
+      return str.substring(prefix.length);
+  } else {
+      return str;
+  }
+}
