@@ -133,7 +133,7 @@ function App() {
         ...prevHistory,
         "Website currently under construction. Please check back soon!",
       ]);
-    } else if (cmd != "") {
+    } else if (cmd !== "") {
       const response = RunCommand(cmd);
       response.then((data) => {
         console.log(data);
