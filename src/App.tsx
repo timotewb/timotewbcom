@@ -21,7 +21,7 @@ function App() {
         setHistory([...history, command]);
       }
       setCommand("    ");
-      terminalInputRef.current!.innerHTML = '<span class="prompt">' +promptStr +"</span>";
+      // terminalInputRef.current!.innerHTML = '<span class="prompt">' +promptStr +"</span>";
     }
   }
 
@@ -59,7 +59,6 @@ function App() {
         ))}
         <div ref={terminalInputRef} className='input' contentEditable="true" onInput={handleTerminalInput} onKeyDown={handleKeyDown}>
         <span className="prompt">{promptStr}</span>
-        {command}
         </div>
       </div>
     </div>
