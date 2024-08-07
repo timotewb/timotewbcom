@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import "./App.css";
-import RunCommand from "./helper/command";
+import RunCommand from "./helper/RunCommand";
 
 function readFromClipboard(): Promise<string | undefined> {
   return new Promise(async (resolve, reject) => {
