@@ -22,6 +22,7 @@ async function writeToClipboard(text: string) {
 function App() {
   const promptStr = "?> ";
   const maxTerminalHistory = 100;
+  const [isLoading, setIsLoading] = useState(true);
   const [command, setCommand] = useState(promptStr);
   const [history, setHistory] = useState<string[]>([]);
   const inputTextRef = useRef<HTMLDivElement>(null);
@@ -124,19 +125,13 @@ function App() {
   const executeCommand = () => {
     let escapedPrefix = promptStr.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     const cmd = command.trim().replace(new RegExp("^" + escapedPrefix), "");
-    console.log(cmd);
+    console.log("cmd:", cmd);
     if (cmd === "clear") {
       setHistory([]);
-    } else if (cmd === "help") {
-      setHistory((prevHistory) => [...prevHistory, command]);
-      setHistory((prevHistory) => [
-        ...prevHistory,
-        "Website currently under construction. Please check back soon!",
-      ]);
     } else if (cmd !== "") {
       const response = RunCommand(cmd);
       response.then((data) => {
-        console.log(data);
+        console.log(data.trim());
         if (data.trim() === "") {
           setHistory((prevHistory) => [...prevHistory, command]);
           setHistory((prevHistory) => [
@@ -159,12 +154,22 @@ function App() {
   };
 
   //----------------------------------------------------------------------------------------
+  // first page load
+  //----------------------------------------------------------------------------------------
+  useEffect(() => {
+    const response = RunCommand("ping");
+    response.then(() => {
+      setIsLoading(false);
+    });
+  }, []);
+
+  //----------------------------------------------------------------------------------------
   // return
   //----------------------------------------------------------------------------------------
   return (
     <div className="terminal-container" onContextMenu={handleRightClick}>
       <div className="header">
-        <div className="greeting">welcome</div>
+        <div className="greeting">{isLoading ? "loading..." : "welcome"}</div>
       </div>
       <div className="input-container" ref={inputTextRef}>
         {history.map((item, index) => (
@@ -175,7 +180,7 @@ function App() {
           className="input-text"
           contentEditable
           suppressContentEditableWarning
-          value={command}
+          value={isLoading ? "loading..." : command}
           onChange={handleCommandChange}
           onCopy={handleCopy}
           onKeyDown={(e) => {

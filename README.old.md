@@ -37,5 +37,4 @@ website
 
 npm install -g @azure/static-web-apps-cli
 npm i
-npm run build
-swa start build --api-location api
+npm run build ; swa start build --api-location api

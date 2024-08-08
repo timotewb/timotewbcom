@@ -14,7 +14,6 @@
 .terminal-container .header {
   display: flex;
   height: 2rem;
-  padding: 0rem 28.25rem;
   justify-content: center;
   align-items: center;
   gap: 0.625rem;
