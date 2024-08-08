@@ -1,3 +1,6 @@
+/*----------------------------------------------------------------------------------------*/
+/* terminal */
+/*----------------------------------------------------------------------------------------*/
 .terminal-container {
   display: flex;
   flex-direction: column;
@@ -7,10 +10,9 @@
 
   border-radius: var(--border-radius);
   background: var(--cp-main);
-  min-height: 100px; /* Adjusted for demonstration */
+  min-height: 100px;
   width: 100%;
 }
-
 .terminal-container .header {
   display: flex;
   height: 2rem;
@@ -21,14 +23,12 @@
   border-radius: var(--border-radius) var(--border-radius) 0rem 0rem;
   background: var(--cp-accent1);
 }
-
 .terminal-container .header .greeting {
   color: var(--cp-main);
   font-size: 1.5rem;
   font-style: normal;
   line-height: normal;
 }
-
 .terminal-container .input-container {
   display: flex;
   align-self: stretch;
@@ -40,7 +40,6 @@
   height: 100%;
   overflow: auto;
 }
-
 .terminal-container .input-container .input-text {
   resize: none;
   align-self: stretch;
@@ -58,4 +57,41 @@
   color: var(--cp-background);
   font-size: 1rem;
   text-align: left;
+}
+
+
+/*----------------------------------------------------------------------------------------*/
+/* pop up */
+/*----------------------------------------------------------------------------------------*/
+.popup-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+.popup {
+  background-color: var(--cp-background);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+}
+.popup-container {
+  backdrop-filter: blur(5px);
+}
+
+
+/*----------------------------------------------------------------------------------------*/
+/* history */
+/*----------------------------------------------------------------------------------------*/
+.hst-command{
+  background-color: rgba(255, 255, 255, 0.5); border-radius: 2px;padding-left: 3px; padding-right: 3px;
+}
+.hst-indent{
+  padding-left: 20px;
 }

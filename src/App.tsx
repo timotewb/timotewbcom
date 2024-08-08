@@ -94,10 +94,6 @@ function App() {
   useEffect(() => {
     setTimeout(() => {
       if (inputTextRef.current) {
-        console.log(
-          "inputTextRef.current.scrollHeight:",
-          inputTextRef.current.scrollHeight
-        );
         inputTextRef.current.scrollTop = inputTextRef.current.scrollHeight;
       }
     }, 0);
@@ -131,24 +127,24 @@ function App() {
     } else if (cmd !== "") {
       const response = RunCommand(cmd);
       response.then((data) => {
-        console.log(data.trim());
-        if (data.trim() === "") {
+        if (data.responseCode === 404) {
           setHistory((prevHistory) => [...prevHistory, command]);
           setHistory((prevHistory) => [
             ...prevHistory,
             cmd + ": command not found",
           ]);
-        } else {
+        } else if (data.responseCode === 200) {
           setHistory((prevHistory) => [...prevHistory, command]);
-          setHistory((prevHistory) => [...prevHistory, data]);
+          setHistory((prevHistory) => [...prevHistory, data.data||""]);
+        } else if (data.responseCode !== 404 && data.responseCode >0) {
+          setHistory((prevHistory) => [...prevHistory, command]);
+          setHistory((prevHistory) => [
+            ...prevHistory,
+            cmd + ": sorry, could not figure that one out. Please try again later.",
+          ]);
         }
+        setCommand(promptStr);
       });
-    } else {
-      setHistory((prevHistory) => [...prevHistory, command]);
-      setHistory((prevHistory) => [
-        ...prevHistory,
-        cmd + ": command not found",
-      ]);
     }
     setCommand(promptStr);
   };
@@ -156,6 +152,15 @@ function App() {
   //----------------------------------------------------------------------------------------
   // first page load
   //----------------------------------------------------------------------------------------
+  const Popup = () => {
+    return (
+      <div className="popup-container">
+        <div className="popup">
+          <p>Just getting things ready.</p>
+        </div>
+      </div>
+    );
+  };
   useEffect(() => {
     const response = RunCommand("ping");
     response.then(() => {
@@ -167,20 +172,21 @@ function App() {
   // return
   //----------------------------------------------------------------------------------------
   return (
+    <>{isLoading && <Popup />}
     <div className="terminal-container" onContextMenu={handleRightClick}>
       <div className="header">
         <div className="greeting">{isLoading ? "loading..." : "welcome"}</div>
       </div>
       <div className="input-container" ref={inputTextRef}>
         {history.map((item, index) => (
-          <span key={index} dangerouslySetInnerHTML={{ __html: item }}></span>
+          <span className="history" key={index} dangerouslySetInnerHTML={{ __html: item }}></span>
         ))}
         <textarea
           ref={textAreaRef}
           className="input-text"
           contentEditable
           suppressContentEditableWarning
-          value={isLoading ? "loading..." : command}
+          value={isLoading ? "" : command}
           onChange={handleCommandChange}
           onCopy={handleCopy}
           onKeyDown={(e) => {
@@ -192,6 +198,7 @@ function App() {
         />
       </div>
     </div>
+    </>
   );
 }
 

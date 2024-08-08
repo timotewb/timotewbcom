@@ -1,8 +1,9 @@
 interface ApiResponse {
   data?: string;
+  responseCode: number;
 }
 
-const RunCommand = (command: string): Promise<string> => {
+const RunCommand = (command: string): Promise<ApiResponse> => {
   const cmd = parseCommand(command);
   const url = `/api/${cmd.endpoint}`;
   return callApi(url, cmd.flags);
@@ -25,35 +26,37 @@ const parseCommand = (command: string): { endpoint: string; flags: string } => {
   }
 };
 
-const callApi = async (url: string, flagStr: string): Promise<string> => {
+const callApi = async (url: string, flagStr: string): Promise<ApiResponse> => {
+  let status: number = 0;
   try {
-    // Create a JSON object with the flags
     let queryParams = "";
     if (flagStr) {
       queryParams = `?flags=${encodeURIComponent(flagStr)}`;
     }
     const fullUrl = `${url}${queryParams}`;
-
-    // Set the headers to indicate we're sending JSON
     const headers = {
       "Content-Type": "application/json",
     };
-
-    // Use fetch with method 'POST' to send the body
     const response = await fetch(fullUrl, {
-      method: "GET", // Specify the method
+      method: "GET",
       headers: headers,
     });
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
+    status = response.status;
 
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${status}`);
+    }
     const responseData: ApiResponse = await response.json();
-    return responseData.data || "";
+    return { data: responseData.data || "", responseCode: status };
   } catch (error) {
-    console.error("Failed to fetch data:", error);
-    return "";
+    if (error instanceof Error) {
+      console.error("Failed to fetch data:", error.message);
+      return { data: error.message, responseCode: status };
+    } else {
+      console.error("Failed to fetch data:", String(error));
+      return { data: String(error), responseCode: status };
+    }
   }
 };
 

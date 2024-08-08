@@ -35,6 +35,19 @@ website
 6. create app
    <br>`create-react-app . --template typescript`
 
+Create file
+`api/local.settings.json`
+with content
+`
+{
+    "IsEncrypted": false,
+    "Values": {
+        "AzureWebJobsStorage": "",
+        "FUNCTIONS_WORKER_RUNTIME": "python",
+        "AzureWebJobsFeatureFlags": "EnableWorkerIndexing"
+    }
+}
+`
 npm install -g @azure/static-web-apps-cli
 npm i
 npm run build ; swa start build --api-location api

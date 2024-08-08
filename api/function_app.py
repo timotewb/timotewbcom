@@ -8,8 +8,6 @@ app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 
 @app.route(route="page")
 def page(req: func.HttpRequest) -> func.HttpResponse:
-    logging.info('Python HTTP trigger function processed a request.')
-
     flags = req.params.get('flags')
     if not flags:
         try:
@@ -32,9 +30,7 @@ def page(req: func.HttpRequest) -> func.HttpResponse:
 def ping(req: func.HttpRequest) -> func.HttpResponse:
     now = datetime.now()
     formatted_date_time = now.strftime("%A %d %B %Y at %I.%M%p")
-
     time.sleep(5)
-
     return func.HttpResponse('{"data":"Response from api at '+formatted_date_time+'"}')
 
 @app.route(route="help")
