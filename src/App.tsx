@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import "./App.css";
 import RunCommand from "./helper/RunCommand";
+import LoadingAnimation from "./helper/LoadingAnimation";
 
 function readFromClipboard(): Promise<string | undefined> {
   return new Promise(async (resolve, reject) => {
@@ -158,6 +159,7 @@ function App() {
       <div className="popup-container">
         <div className="popup">
           <p>Just getting things ready.</p>
+          <LoadingAnimation />
         </div>
       </div>
     );
