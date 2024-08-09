@@ -59,7 +59,6 @@
   text-align: left;
 }
 
-
 /*----------------------------------------------------------------------------------------*/
 /* pop up */
 /*----------------------------------------------------------------------------------------*/
@@ -85,13 +84,15 @@
   backdrop-filter: blur(5px);
 }
 
-
 /*----------------------------------------------------------------------------------------*/
 /* history */
 /*----------------------------------------------------------------------------------------*/
-.hst-command{
-  background-color: rgba(255, 255, 255, 0.5); border-radius: 2px;padding-left: 3px; padding-right: 3px;
+.hst-command {
+  background-color: rgba(0, 0, 0, 0.338);
+  border-radius: 2px;
+  padding-left: 3px;
+  padding-right: 3px;
 }
-.hst-indent{
-  padding-left: 20px;
+.hst-indent {
+  padding-left: 1.75rem;
 }

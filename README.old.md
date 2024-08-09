@@ -38,16 +38,15 @@ website
 Create file
 `api/local.settings.json`
 with content
-`
-{
+`{
     "IsEncrypted": false,
     "Values": {
         "AzureWebJobsStorage": "",
         "FUNCTIONS_WORKER_RUNTIME": "python",
         "AzureWebJobsFeatureFlags": "EnableWorkerIndexing"
     }
-}
-`
+}`
+python -m venv api/.venv
 npm install -g @azure/static-web-apps-cli
 npm i
 npm run build ; swa start build --api-location api

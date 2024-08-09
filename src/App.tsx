@@ -131,16 +131,17 @@ function App() {
           setHistory((prevHistory) => [...prevHistory, command]);
           setHistory((prevHistory) => [
             ...prevHistory,
-            cmd + ": command not found",
+            "<i>" + cmd + "</i>" + ": command not found",
           ]);
         } else if (data.responseCode === 200) {
           setHistory((prevHistory) => [...prevHistory, command]);
-          setHistory((prevHistory) => [...prevHistory, data.data||""]);
-        } else if (data.responseCode !== 404 && data.responseCode >0) {
+          setHistory((prevHistory) => [...prevHistory, data.data || ""]);
+        } else if (data.responseCode !== 404 && data.responseCode > 0) {
           setHistory((prevHistory) => [...prevHistory, command]);
           setHistory((prevHistory) => [
             ...prevHistory,
-            cmd + ": sorry, could not figure that one out. Please try again later.",
+            cmd +
+              ": sorry, could not figure that one out. Please try again later.",
           ]);
         }
         setCommand(promptStr);
@@ -162,9 +163,10 @@ function App() {
     );
   };
   useEffect(() => {
-    const response = RunCommand("ping");
-    response.then(() => {
+    var response = RunCommand("greeting");
+    response.then((data) => {
       setIsLoading(false);
+      setHistory([data.data || ""]);
     });
   }, []);
 
@@ -172,32 +174,37 @@ function App() {
   // return
   //----------------------------------------------------------------------------------------
   return (
-    <>{isLoading && <Popup />}
-    <div className="terminal-container" onContextMenu={handleRightClick}>
-      <div className="header">
-        <div className="greeting">{isLoading ? "loading..." : "welcome"}</div>
+    <>
+      {isLoading && <Popup />}
+      <div className="terminal-container" onContextMenu={handleRightClick}>
+        <div className="header">
+          <div className="greeting">{isLoading ? "loading..." : ""}</div>
+        </div>
+        <div className="input-container" ref={inputTextRef}>
+          {history.map((item, index) => (
+            <span
+              className="history"
+              key={index}
+              dangerouslySetInnerHTML={{ __html: item }}
+            ></span>
+          ))}
+          <textarea
+            ref={textAreaRef}
+            className="input-text"
+            contentEditable
+            suppressContentEditableWarning
+            value={isLoading ? "" : command}
+            onChange={handleCommandChange}
+            onCopy={handleCopy}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                executeCommand();
+              }
+            }}
+          />
+        </div>
       </div>
-      <div className="input-container" ref={inputTextRef}>
-        {history.map((item, index) => (
-          <span className="history" key={index} dangerouslySetInnerHTML={{ __html: item }}></span>
-        ))}
-        <textarea
-          ref={textAreaRef}
-          className="input-text"
-          contentEditable
-          suppressContentEditableWarning
-          value={isLoading ? "" : command}
-          onChange={handleCommandChange}
-          onCopy={handleCopy}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              executeCommand();
-            }
-          }}
-        />
-      </div>
-    </div>
     </>
   );
 }

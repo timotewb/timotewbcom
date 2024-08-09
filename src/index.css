@@ -2,7 +2,8 @@
   /*colour pallet*/
   --cp-background: #fffceb;
   --cp-main: #36577f;
-  --cp-accent1: #ffa67e;
+  /* --cp-accent1: #ffa67e; */
+  --cp-accent1: #1b3351;
   --border-radius: 0.9375rem;
 }
 
