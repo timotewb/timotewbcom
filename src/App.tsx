@@ -131,7 +131,7 @@ function App() {
           setHistory((prevHistory) => [...prevHistory, command]);
           setHistory((prevHistory) => [
             ...prevHistory,
-            "<i>" + cmd + "</i>" + ": command not found",
+            "<i>" + cmd + "</i>: command not found",
           ]);
         } else if (data.responseCode === 200) {
           setHistory((prevHistory) => [...prevHistory, command]);
