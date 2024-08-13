@@ -96,3 +96,6 @@
 .hst-indent {
   padding-left: 1.75rem;
 }
+.hst-error {
+  color: var(--cp-accent2);
+}

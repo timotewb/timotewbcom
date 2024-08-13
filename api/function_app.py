@@ -36,7 +36,12 @@ def ping(req: func.HttpRequest) -> func.HttpResponse:
 
 @app.route(route="help")
 def help(req: func.HttpRequest) -> func.HttpResponse:
-    return func.HttpResponse('{"data":"'+helpApp.help()+'"}')
+    flags = req.params.get('flags')
+    if not flags:
+        return func.HttpResponse('{"data":"'+helpApp.success()+'"}')
+    else:
+        return func.HttpResponse('{"data":"'+helpApp.fail()+'"}')
+
 
 @app.route(route="greeting")
 def greeting(req: func.HttpRequest) -> func.HttpResponse:

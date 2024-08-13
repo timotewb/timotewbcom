@@ -1,5 +1,5 @@
 
-def help() -> str:
+def success() -> str:
     multiline_string = """<b>Welcome to the website terminal interface!</b>
 
     This terminal interface allows you to navigate and interact with my website using simple text commands. Below, you'll find a list of available commands and how to use them. For example, to view the About page, you would enter the command <span class='hst-command'>page --about</span>.
@@ -32,5 +32,10 @@ def help() -> str:
     Remember, commands are case-sensitive. If you encounter any issues or have questions about a command, typing <span class='hst-command'>help</span> will bring you back here.
 
     Enjoy exploring my website through the terminal!"""
+    single_line_string = multiline_string.replace('\n', '<br>')
+    return single_line_string
+
+def fail() -> str:
+    multiline_string = """<span class='hst-error'>Error:</span> the <span class='hst-command'>help</span> command does not implement any flags."""
     single_line_string = multiline_string.replace('\n', '<br>')
     return single_line_string
