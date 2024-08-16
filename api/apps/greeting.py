@@ -11,7 +11,6 @@ def greeting() -> str:
     To get started, try entering the command <span class='hst-command'>help</span> and hitting enter.
 
     Session start time: {formatted_date_time}
-    TestVar: {e}
     """
     single_line_string = multiline_string.replace('\n', '<br>')
     return single_line_string
