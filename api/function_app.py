@@ -5,6 +5,7 @@ import time
 import apps.help as helpApp
 import apps.greeting as greetingApp
 import apps.home as homeApp
+import apps.cpustat as cpustatApp
 
 app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 
@@ -50,3 +51,7 @@ def greeting(req: func.HttpRequest) -> func.HttpResponse:
 @app.route(route="home")
 def home(req: func.HttpRequest) -> func.HttpResponse:
     return func.HttpResponse('{"data":"'+homeApp.home()+'"}')
+
+@app.route(route="cpustat")
+def home(req: func.HttpRequest) -> func.HttpResponse:
+    return func.HttpResponse('{"data":"'+cpustatApp.success()+'"}')
