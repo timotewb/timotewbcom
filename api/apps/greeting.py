@@ -1,7 +1,8 @@
 from datetime import datetime
 
+
 def greeting() -> str:
-    
+
     now = datetime.now()
     formatted_date_time = now.strftime("%A %d %B %Y at %I.%M%p")
 

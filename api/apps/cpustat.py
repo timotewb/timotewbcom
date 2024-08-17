@@ -1,34 +1,48 @@
 import os
-from azure.storage.blob import BlobServiceClient
+from azure.storage.blob import BlobServiceClient, generate_blob_sas, BlobSasPermissions
+from datetime import datetime, timedelta, timezone
+import urllib.request
+import json
+from apps.models.cpustat import cpustatLatestType
+
 
 def success() -> str:
 
     account_name: str = os.environ["StorageAccountName"]
     account_key: str = os.environ["StorageAccountKey"]
     container_name: str = os.environ["ComsContainerName"]
+    blob_name: str = "cpustat-latest.json"
 
-    #create a client to interact with blob storage
-    connect_str = 'DefaultEndpointsProtocol=https;AccountName=' + account_name + ';AccountKey=' + account_key + ';EndpointSuffix=core.windows.net'
-    blob_service_client = BlobServiceClient.from_connection_string(connect_str)
+    # generate a shared access signature for each blob file
+    sas_i = generate_blob_sas(account_name=account_name,
+                              container_name=container_name,
+                              blob_name=blob_name,
+                              account_key=account_key,
+                              permission=BlobSasPermissions(read=True),
+                              expiry=datetime.now(timezone.utc) + timedelta(hours=1))
 
-    #use the client to connect to the container
-    container_client = blob_service_client.get_container_client(container_name)
+    sas_url = 'https://' + account_name+'.blob.core.windows.net/' + \
+        container_name + '/' + blob_name + '?' + sas_i
 
-    #get a list of all blob files in the container
-    blob_list = []
-    for blob_i in container_client.list_blobs():
-        blob_list.append(blob_i.name)
-        
+    with urllib.request.urlopen(sas_url) as resp:
 
-    #generate a shared access signiture for files and load them into Python
-    for blob_i in blob_list:
-        #generate a shared access signature for each blob file
-        print(blob_i)
+        # data = cpustatLatestType(**json.loads(resp.read().decode('utf-8')))
+        data = cpustatLatestType(json.loads(
+            resp.read().decode('utf-8')))
 
-    multiline_string = f"""Welcome to the terminal interface!
+    print(data.servers[0].name)
 
-    Use commands to navigate and interact with the website.
-    To get started, try entering the command <span class='hst-command'>help</span> and hitting enter.
+    multiline_string = f"""cputstat!
+
     """
+
+    for server in data.servers:
+        if server.ping:
+            s: str = server.name
+        else:
+            s: str = "<span class='hst-error'>" + server.name + "</span>"
+
+        multiline_string = multiline_string + "<br>" + s
+
     single_line_string = multiline_string.replace('\n', '<br>')
     return single_line_string

@@ -35,6 +35,7 @@ def success() -> str:
     single_line_string = multiline_string.replace('\n', '<br>')
     return single_line_string
 
+
 def fail() -> str:
     multiline_string = """<span class='hst-error'>Error:</span> the <span class='hst-command'>help</span> command does not implement any flags."""
     single_line_string = multiline_string.replace('\n', '<br>')
