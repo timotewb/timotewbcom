@@ -30,19 +30,25 @@ def success() -> str:
         data = cpustatLatestType(json.loads(
             resp.read().decode('utf-8')))
 
-    multiline_string = f"""cputstat!
-    """
+    multiline_string = f"""<b>CPU Server Monitoring - Latest</b>
+    <p>Serving the latest details for CPU servers.
+    Details last updated: -datetime-</p>"""
 
     for server in data.servers:
+        s: str = "<p>"
+
+        # is server up?
         if server.ping:
-            s: str = server.name
+            s = f"{s}{server.name}:<br>"
+            s = f"{s}<span class='hst-indent'>Load:&nbsp;&nbsp;&nbsp;{server.load_average}</span><br>"
+            s = f"{s}<span class='hst-indent'>Procs:&nbsp;&nbsp;{server.running_procs}</span><br>"
+            s = f"{s}<span class='hst-indent'>Uptime:&nbsp;{server.uptime}</span>"
         else:
-            s: str = "<span class='hst-error'>" + server.name + "</span>"
+            s = f"{s}<span class='hst-error'><i>{server.name} (down)</i>:</span><br>"
 
-        multiline_string = multiline_string + "<br>" + s
+        s = f"{s}</p>"
 
-        # end of server line
-        multiline_string += "<br>"
+        multiline_string = multiline_string + s
 
     single_line_string = multiline_string.replace('\n', '<br>')
     return single_line_string
