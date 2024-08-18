@@ -10,7 +10,7 @@ def success() -> str:
 
     account_name: str = os.environ["StorageAccountName"]
     account_key: str = os.environ["StorageAccountKey"]
-    container_name: str = os.environ["ComsContainerName"]
+    container_name: str = os.environ["CPUStatContainerName"]
     blob_name: str = "cpustat-latest.json"
 
     # generate a shared access signature for each blob file
@@ -30,10 +30,7 @@ def success() -> str:
         data = cpustatLatestType(json.loads(
             resp.read().decode('utf-8')))
 
-    print(data.servers[0].name)
-
     multiline_string = f"""cputstat!
-
     """
 
     for server in data.servers:
@@ -43,6 +40,9 @@ def success() -> str:
             s: str = "<span class='hst-error'>" + server.name + "</span>"
 
         multiline_string = multiline_string + "<br>" + s
+
+        # end of server line
+        multiline_string += "<br>"
 
     single_line_string = multiline_string.replace('\n', '<br>')
     return single_line_string
