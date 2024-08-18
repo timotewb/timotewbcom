@@ -46,8 +46,16 @@ with content
         "AzureWebJobsFeatureFlags": "EnableWorkerIndexing"
     }
 }`
-python -m venv api/.venv
-npm install node-sass --save-dev
-npm install -g @azure/static-web-apps-cli
-npm i
-npm run build ; swa start build --api-location api
+<br>
+`python -m venv api/.venv`<br>
+`npm install node-sass --save-dev`<br>
+`npm install -g @azure/static-web-apps-cli`<br>
+`npm i`<br>
+`npm run build ; swa start build --api-location api`<br>
+
+# Setup with API
+1. Create virtual environment in api folder<br>
+`python -m venv api/.venv`
+2. Create local.settings.json
+3. Activate virtual environmnet then run<br>
+`npm run build ; swa start build --api-location api`<br>
