@@ -1,6 +1,6 @@
 
 def success() -> str:
-    multiline_string = """<b>Welcome to the website terminal interface!</b>
+    multiline_string = """<b>Welcome to the terminal interface!</b>
 
     This terminal interface allows you to navigate and interact with my website using simple text commands. Below, you'll find a list of available commands and how to use them. For example, to view the About page, you would enter the command <span class='hst-command'>page --about</span>.
 
