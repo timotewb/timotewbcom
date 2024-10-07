@@ -1,5 +1,6 @@
 import os
-from azure.storage.blob import BlobServiceClient, generate_blob_sas, BlobSasPermissions
+from azure.identity import DefaultAzureCredential
+from azure.storage.blob import BlobServiceClient, BlobSasPermissions, generate_blob_sas
 from datetime import datetime, timedelta, timezone
 import urllib.request
 import json
@@ -10,45 +11,48 @@ def success() -> str:
 
     account_name: str = os.environ["StorageAccountName"]
     account_key: str = os.environ["StorageAccountKey"]
-    container_name: str = os.environ["CPUStatContainerName"]
+    container_name: str = os.environ["ComsContainerName"]
     blob_name: str = "cpustat-latest.json"
 
-    # generate a shared access signature for each blob file
-    sas_i = generate_blob_sas(account_name=account_name,
-                              container_name=container_name,
-                              blob_name=blob_name,
-                              account_key=account_key,
-                              permission=BlobSasPermissions(read=True),
-                              expiry=datetime.now(timezone.utc) + timedelta(hours=1))
+    # TODO: Replace <storage-account-name> with your actual storage account name
+    account_url = f"https://{account_name}.blob.core.windows.net"
+    credential = DefaultAzureCredential()
 
-    sas_url = 'https://' + account_name+'.blob.core.windows.net/' + \
-        container_name + '/' + blob_name + '?' + sas_i
+    # Create the BlobServiceClient object
+    blob_service_client = BlobServiceClient(account_url, credential=credential)
+    data = list_blobs(blob_service_client, account_name,
+                      account_key, container_name)
+    print(data)
+    return ""
 
-    with urllib.request.urlopen(sas_url) as resp:
 
-        # data = cpustatLatestType(**json.loads(resp.read().decode('utf-8')))
-        data = cpustatLatestType(json.loads(
-            resp.read().decode('utf-8')))
+def list_blobs(blob_service_client: BlobServiceClient, account_name, account_key, container_name) -> dict:
+    resp = dict()
+    resp['servers'] = list()
 
-    multiline_string = f"""<b>CPU Server Monitoring - Latest</b>
-    <p>Serving the latest details for CPU servers.
-    Details last updated: -datetime-</p>"""
+    container_client = blob_service_client.get_container_client(
+        container=container_name)
 
-    for server in data.servers:
-        s: str = "<p>"
+    blob_list = container_client.list_blobs()
 
-        # is server up?
-        if server.ping:
-            s = f"{s}{server.name}:<br>"
-            s = f"{s}<span class='hst-indent'>Load:&nbsp;&nbsp;&nbsp;{server.load_average}</span><br>"
-            s = f"{s}<span class='hst-indent'>Procs:&nbsp;&nbsp;{server.running_procs}</span><br>"
-            s = f"{s}<span class='hst-indent'>Uptime:&nbsp;{server.uptime}</span>"
-        else:
-            s = f"{s}<span class='hst-error'><i>{server.name} (down)</i>:</span><br>"
+    for blob in blob_list:
+        print(f"Name: {blob.name}")
+        if "-latest.json" in blob.name:
+            # generate a shared access signature for each blob file
+            sas_i = generate_blob_sas(account_name=account_name,
+                                      container_name=container_name,
+                                      blob_name=blob.name,
+                                      account_key=account_key,
+                                      permission=BlobSasPermissions(read=True),
+                                      expiry=datetime.now(timezone.utc) + timedelta(hours=1))
 
-        s = f"{s}</p>"
+            sas_url = 'https://' + account_name+'.blob.core.windows.net/' + \
+                container_name + '/' + blob.name + '?' + sas_i
 
-        multiline_string = multiline_string + s
+            with urllib.request.urlopen(sas_url) as resp:
 
-    single_line_string = multiline_string.replace('\n', '<br>')
-    return single_line_string
+                # data = cpustatLatestType(**json.loads(resp.read().decode('utf-8')))
+                data = cpustatLatestType(json.loads(
+                    resp.read().decode('utf-8')))
+                resp['servers'].append(data)
+    return resp
