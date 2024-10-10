@@ -56,6 +56,6 @@ with content
 # Setup with API
 1. Create virtual environment in api folder<br>
 `python -m venv api/.venv`
-2. Create local.settings.json
+2. Create local.settings.json in root and populate
 3. Activate virtual environmnet then run<br>
 `npm run build ; swa start build --api-location api`<br>
