@@ -22,11 +22,18 @@ def success() -> str:
     blob_service_client = BlobServiceClient(account_url, credential=credential)
     data = list_blobs(blob_service_client, account_name,
                       account_key, container_name)
-    print(data)
-    return ""
+
+    multiline_string = f"""<b>CPU Server Monitoring - Latest</b>
+    <p>Serving the latest details for CPU servers.
+    Details last updated: -datetime-</p>"""
+
+    for s in data:
+        print(s)
+
+    return str(data)
 
 
-def list_blobs(blob_service_client: BlobServiceClient, account_name, account_key, container_name) -> dict:
+def list_blobs(blob_service_client: BlobServiceClient, account_name, account_key, container_name) -> cpustatLatestType:
     resp = dict()
     resp['servers'] = list()
 
@@ -36,7 +43,7 @@ def list_blobs(blob_service_client: BlobServiceClient, account_name, account_key
     blob_list = container_client.list_blobs()
 
     for blob in blob_list:
-        print(f"Name: {blob.name}")
+        # print(f"Name: {blob.name}")
         if "-latest.json" in blob.name:
             # generate a shared access signature for each blob file
             sas_i = generate_blob_sas(account_name=account_name,
@@ -50,9 +57,5 @@ def list_blobs(blob_service_client: BlobServiceClient, account_name, account_key
                 container_name + '/' + blob.name + '?' + sas_i
 
             with urllib.request.urlopen(sas_url) as resp:
-
-                # data = cpustatLatestType(**json.loads(resp.read().decode('utf-8')))
-                data = cpustatLatestType(json.loads(
-                    resp.read().decode('utf-8')))
-                resp['servers'].append(data)
-    return resp
+                resp['servers'].append(json.loads(resp.read().decode('utf-8')))
+    return cpustatLatestType(resp)

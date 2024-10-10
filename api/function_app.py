@@ -58,5 +58,4 @@ def home(req: func.HttpRequest) -> func.HttpResponse:
 
 @app.route(route="cpustat")
 def cpustat(req: func.HttpRequest) -> func.HttpResponse:
-    cpustatApp.success()
-    return func.HttpResponse('{"data":"test"}')
+    return func.HttpResponse('{"data":'+cpustatApp.success()+'}')
