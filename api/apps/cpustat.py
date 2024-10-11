@@ -27,10 +27,10 @@ def success() -> str:
     <p>Serving the latest details for CPU servers.
     Details last updated: -datetime-</p>"""
 
-    for s in data:
+    for s in data.servers:
         print(s)
 
-    return str(data)
+    return ""
 
 
 def list_blobs(blob_service_client: BlobServiceClient, account_name, account_key, container_name) -> cpustatLatestType:
@@ -57,5 +57,6 @@ def list_blobs(blob_service_client: BlobServiceClient, account_name, account_key
                 container_name + '/' + blob.name + '?' + sas_i
 
             with urllib.request.urlopen(sas_url) as resp:
-                resp['servers'].append(json.loads(resp.read().decode('utf-8')))
+                print(resp.read().decode('utf-8'))
+                # resp['servers'].append(json.loads(resp.read().decode('utf-8')))
     return cpustatLatestType(resp)
