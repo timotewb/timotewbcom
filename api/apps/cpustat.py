@@ -4,7 +4,7 @@ from azure.storage.blob import BlobServiceClient, BlobSasPermissions, generate_b
 # from datetime import datetime, timedelta, timezone
 # import urllib.request
 # import json
-# from apps.models.cpustat import cpustatLatestType
+from apps.models.cpustat import cpustatLatestType
 
 
 def success() -> str:
