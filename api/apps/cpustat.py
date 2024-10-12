@@ -1,6 +1,6 @@
 import os
-from azure.identity import DefaultAzureCredential
-from azure.storage.blob import BlobServiceClient, BlobSasPermissions, generate_blob_sas
+# from azure.identity import DefaultAzureCredential
+# from azure.storage.blob import BlobServiceClient, BlobSasPermissions, generate_blob_sas
 from datetime import datetime, timedelta, timezone
 import urllib.request
 import json
@@ -15,10 +15,10 @@ def success(flags: str | None) -> str:
 
     # TODO: Replace <storage-account-name> with your actual storage account name
     account_url = f"https://{account_name}.blob.core.windows.net"
-    credential = DefaultAzureCredential()
+    # credential = DefaultAzureCredential()
 
     # Create the BlobServiceClient object
-    blob_service_client = BlobServiceClient(account_url, credential=credential)
+    # blob_service_client = BlobServiceClient(account_url, credential=credential)
     # data = list_blobs(blob_service_client, account_name,
     #                   account_key, container_name)
 

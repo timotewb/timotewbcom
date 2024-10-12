@@ -67,5 +67,5 @@ def cpustat(req: func.HttpRequest) -> func.HttpResponse:
         else:
             flags = req_body.get('flags')
     logging.info(flags)
-    # return func.HttpResponse('{"data":"'+cpustatApp.success(flags)+'"}')
-    return func.HttpResponse('{"data":""}')
+    return func.HttpResponse('{"data":"'+cpustatApp.success(flags)+'"}')
+    # return func.HttpResponse('{"data":""}')
