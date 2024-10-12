@@ -9,12 +9,12 @@ from apps.models.cpustat import cpustatLatestType
 
 def success(flags: str | None) -> str:
 
-    account_name: str = os.environ["StorageAccountName"]
-    account_key: str = os.environ["StorageAccountKey"]
-    container_name: str = os.environ["ContainerName"]
+    # account_name: str = os.environ["StorageAccountName"]
+    # account_key: str = os.environ["StorageAccountKey"]
+    # container_name: str = os.environ["ContainerName"]
 
     # TODO: Replace <storage-account-name> with your actual storage account name
-    account_url = f"https://{account_name}.blob.core.windows.net"
+    # account_url = f"https://{account_name}.blob.core.windows.net"
     # credential = DefaultAzureCredential()
 
     # Create the BlobServiceClient object
