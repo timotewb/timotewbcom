@@ -25,7 +25,7 @@ def page(req: func.HttpRequest) -> func.HttpResponse:
         return func.HttpResponse('{"data":"<div>Hello from <b>API</b> </div>"}')
     else:
         return func.HttpResponse(
-            '{"data":"<div>Hello from <b>API</b> </div>"}',
+            '{"data":"<div>Hello from <b>API</b> no flags</div>"}',
             status_code=200
         )
 
@@ -58,4 +58,13 @@ def home(req: func.HttpRequest) -> func.HttpResponse:
 
 @app.route(route="cpustat")
 def cpustat(req: func.HttpRequest) -> func.HttpResponse:
-    return func.HttpResponse('{"data":"'+cpustatApp.success()+'"}')
+    flags: str | None = req.params.get('flags')
+    if not flags:
+        try:
+            req_body = req.get_json()
+        except ValueError:
+            pass
+        else:
+            flags = req_body.get('flags')
+    logging.info(flags)
+    return func.HttpResponse('{"data":"'+cpustatApp.success(flags)+'"}')
