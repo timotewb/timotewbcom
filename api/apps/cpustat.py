@@ -24,11 +24,17 @@ def success() -> str:
                       account_key, container_name)
 
     multiline_string = f"""<b>CPU Server Monitoring - Latest</b>
-    <p>Serving the latest details for CPU servers.
-    Details last updated: -datetime-</p>"""
+    <p>Serving the latest details for CPU servers.</p>"""
 
     for s in data.servers:
-        multiline_string = multiline_string + "<p>"+ s.name + "</p>"
+        multiline_string = multiline_string + "<p>" + s.name
+        
+        if check_last_updated:
+            multiline_string += """ <span class='online'>●</span><br>"""
+        else:
+            multiline_string += """ <span class='offline'>●</span><br>"""           
+
+        multiline_string = multiline_string + "</p>"
 
     single_line_string = multiline_string.replace('\n', '<br>')
     return single_line_string
@@ -62,3 +68,30 @@ def list_blobs(blob_service_client: BlobServiceClient, account_name, account_key
                 servers.append(json.loads(resp.read().decode('utf-8')))
 
     return cpustatLatestType(servers)
+
+
+def check_last_updated(date_string: str) -> bool:
+    """
+    Checks if the given date string is older than 10 minutes from now.
+    
+    Args:
+    date_string (str): A string representing a date and time in the format "YYYY-MM-DD HH:MM:SS".
+    
+    Returns:
+    bool: True if the date is older than 10 minutes, False otherwise.
+    """
+    try:
+        # Convert the string to a datetime object
+        dt = datetime.strptime(date_string, "%Y-%m-%d %H:%M:%S")
+        
+        # Get the current time
+        now = datetime.now()
+        
+        # Calculate the difference between now and the given date
+        time_difference = now - dt
+        
+        # Return True if the difference is less than 10 minutes, False otherwise
+        return time_difference < timedelta(minutes=10)
+    except ValueError:
+        # Handle invalid input
+        raise ValueError("Invalid date string format. Please use YYYY-MM-DD HH:MM:SS.")
