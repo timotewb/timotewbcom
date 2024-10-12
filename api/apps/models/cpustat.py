@@ -1,7 +1,7 @@
 from datetime import datetime
 
 
-class Server:
+class ServerType:
     def __init__(self, name, platform, last_updated, load_average, running_procs, uptime, mem_used_pct, cpu_core_count, cpu_model):
         self.name: str = name
         self.platform: str = platform
@@ -16,5 +16,5 @@ class Server:
 
 class cpustatLatestType:
     def __init__(self, servers):
-        self.servers: list[Server] = [Server(
-            server['name'], server['platform'], server['last_updated'], server['load_average'], server['running_procs'], server['uptime'], server['mem_used_pct'], server['cpu_core_count'], server['cpu_model']) for server in servers["servers"]]
+        self.servers: list[ServerType] = [ServerType(
+            server['name'], server['platform'], server['last_updated'], server['load_average'], server['running_procs'], server['uptime'], server['mem_used_pct'], server['cpu_core_count'], server['cpu_model']) for server in servers]

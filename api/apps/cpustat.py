@@ -5,14 +5,14 @@ from datetime import datetime, timedelta, timezone
 import urllib.request
 import json
 from apps.models.cpustat import cpustatLatestType
+from apps.models.cpustat import ServerType
 
 
 def success() -> str:
 
     account_name: str = os.environ["StorageAccountName"]
     account_key: str = os.environ["StorageAccountKey"]
-    container_name: str = os.environ["ComsContainerName"]
-    blob_name: str = "cpustat-latest.json"
+    container_name: str = os.environ["ContainerName"]
 
     # TODO: Replace <storage-account-name> with your actual storage account name
     account_url = f"https://{account_name}.blob.core.windows.net"
@@ -28,14 +28,16 @@ def success() -> str:
     Details last updated: -datetime-</p>"""
 
     for s in data.servers:
-        print(s)
+        multiline_string = multiline_string + "<p>"+ s.name + "</p>"
 
-    return ""
+    single_line_string = multiline_string.replace('\n', '<br>')
+    return single_line_string
 
 
 def list_blobs(blob_service_client: BlobServiceClient, account_name, account_key, container_name) -> cpustatLatestType:
     resp = dict()
     resp['servers'] = list()
+    servers = list()
 
     container_client = blob_service_client.get_container_client(
         container=container_name)
@@ -43,7 +45,7 @@ def list_blobs(blob_service_client: BlobServiceClient, account_name, account_key
     blob_list = container_client.list_blobs()
 
     for blob in blob_list:
-        # print(f"Name: {blob.name}")
+        print(f"Name: {blob.name}, Container: {blob.container}")
         if "-latest.json" in blob.name:
             # generate a shared access signature for each blob file
             sas_i = generate_blob_sas(account_name=account_name,
@@ -57,6 +59,6 @@ def list_blobs(blob_service_client: BlobServiceClient, account_name, account_key
                 container_name + '/' + blob.name + '?' + sas_i
 
             with urllib.request.urlopen(sas_url) as resp:
-                print(resp.read().decode('utf-8'))
-                # resp['servers'].append(json.loads(resp.read().decode('utf-8')))
-    return cpustatLatestType(resp)
+                servers.append(json.loads(resp.read().decode('utf-8')))
+
+    return cpustatLatestType(servers)
