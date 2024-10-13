@@ -1,5 +1,4 @@
 import os
-# from azure.identity import DefaultAzureCredential
 from azure.storage.blob import BlobServiceClient, BlobSasPermissions, generate_blob_sas
 from datetime import datetime, timedelta, timezone
 import urllib.request
@@ -8,55 +7,57 @@ from apps.models.cpustat import cpustatLatestType
 
 
 def success() -> str:
-    try:
-        account_name: str = os.environ["StorageAccountName"]
-        account_key: str = os.environ["StorageAccountKey"]
-        container_name: str = os.environ["ContainerName"]
+    # try:
+    account_name: str = os.environ["StorageAccountName"]
+    account_key: str = os.environ["StorageAccountKey"]
+    container_name: str = os.environ["ContainerName"]
 
-        # TODO: Replace <storage-account-name> with your actual storage account name
-        account_url = f"https://{account_name}.blob.core.windows.net"
-        from azure.identity import DefaultAzureCredential
-        credential = DefaultAzureCredential()
+    # TODO: Replace <storage-account-name> with your actual storage account name
+    account_url = f"https://{account_name}.blob.core.windows.net"
+    from azure.identity import DefaultAzureCredential
+    credential = DefaultAzureCredential()
 
-        # Create the BlobServiceClient object
-        blob_service_client = BlobServiceClient(
-            account_url, credential=credential)
-        data = list_blobs(blob_service_client, account_name,
-                          account_key, container_name)
+    # Create the BlobServiceClient object
+    blob_service_client = BlobServiceClient(
+        account_url, credential=credential)
+    data = list_blobs(blob_service_client, account_name,
+                      account_key, container_name)
 
-        multiline_string = f"""<b>CPU Server Monitoring - Latest</b>
-        <p>Serving the latest details for CPU servers.</p>"""
+    multiline_string = f"""<b>CPU Server Monitoring - Latest</b>
+    <p>Serving the latest details for CPU servers.</p>"""
 
-        for s in data.servers:
-            multiline_string = multiline_string + "<p>" + s.name
+    for s in data.servers:
+        multiline_string = multiline_string + "<p>" + s.name
 
-            if check_last_updated:
-                multiline_string += """ <span class='online'>●</span><br>"""
-            else:
-                multiline_string += """ <span class='offline'>●</span><br>"""
+        if check_last_updated(s.last_updated):
+            multiline_string += """ <span class='online'>●</span><br>"""
+        else:
+            multiline_string += """ <span class='offline'>●</span><br>"""
 
-            multiline_string += "<span class='hst-indent'>- Load: " + \
-                s.load_average+"</span><br>"
-            multiline_string += "<span class='hst-indent'>- Mem: " + \
-                str(int(s.mem_used_pct))+"%</span><br>"
-            multiline_string += "<span class='hst-indent'>- Uptime: " + \
-                s.uptime+"</span><br>"
-            multiline_string += "<span class='hst-indent'>- Procs: " + \
-                str(int(s.running_procs))+"</span><br>"
-            multiline_string += "<span class='hst-indent'>- Platform: " + \
-                s.platform+"</span><br>"
-            multiline_string += "<span class='hst-indent'>- Cores: " + \
-                str(int(s.cpu_core_count))+"</span><br>"
-            if s.cpu_model != "":
-                multiline_string += "<span class='hst-indent'>- " + \
-                    s.cpu_model+"</span><br>"
+        multiline_string += "<span class='hst-indent'>- Load: " + \
+            s.load_average+"</span><br>"
+        multiline_string += "<span class='hst-indent'>- Mem: " + \
+            str(int(s.mem_used_pct))+"%</span><br>"
+        multiline_string += "<span class='hst-indent'>- Uptime: " + \
+            s.uptime+"</span><br>"
+        multiline_string += "<span class='hst-indent'>- Procs: " + \
+            str(int(s.running_procs))+"</span><br>"
+        multiline_string += "<span class='hst-indent'>- Platform: " + \
+            s.platform+"</span><br>"
+        multiline_string += "<span class='hst-indent'>- Cores: " + \
+            str(int(s.cpu_core_count))+"</span><br>"
+        multiline_string += "<span class='hst-indent'>- Last Updated: " + \
+            s.last_updated.strftime("%Y-%m-%d %H:%M")+"</span><br>"
+        if s.cpu_model != "":
+            multiline_string += "<span class='hst-indent'>- " + \
+                s.cpu_model+"</span><br>"
 
-            multiline_string += "</p>"
+        multiline_string += "</p>"
 
-        single_line_string = multiline_string.replace('\n', '<br>')
-        return single_line_string
-    except Exception as e:
-        return str(e).replace('"', "'")
+    single_line_string = multiline_string.replace('\n', '<br>')
+    return single_line_string
+    # except Exception as e:
+    #     return str(e).replace('"', "'")
 
 
 def list_blobs(blob_service_client: BlobServiceClient, account_name, account_key, container_name) -> cpustatLatestType:
@@ -89,7 +90,7 @@ def list_blobs(blob_service_client: BlobServiceClient, account_name, account_key
     return cpustatLatestType(servers)
 
 
-def check_last_updated(date_string: str) -> bool:
+def check_last_updated(date_val: datetime) -> bool:
     """
     Checks if the given date string is older than 10 minutes from now.
 
@@ -99,19 +100,10 @@ def check_last_updated(date_string: str) -> bool:
     Returns:
     bool: True if the date is older than 10 minutes, False otherwise.
     """
-    try:
-        # Convert the string to a datetime object
-        dt = datetime.strptime(date_string, "%Y-%m-%d %H:%M:%S")
+    # Get the current time
+    now = datetime.now(timezone.utc)
+    time_difference = now - date_val
+    print(
+        f"dv: {date_val}, now: {now}, td: {time_difference}, tdc: {timedelta(minutes=10)}")
 
-        # Get the current time
-        now = datetime.now()
-
-        # Calculate the difference between now and the given date
-        time_difference = now - dt
-
-        # Return True if the difference is less than 10 minutes, False otherwise
-        return time_difference < timedelta(minutes=10)
-    except ValueError:
-        # Handle invalid input
-        raise ValueError(
-            "Invalid date string format. Please use YYYY-MM-DD HH:MM:SS.")
+    return time_difference < timedelta(minutes=10)
