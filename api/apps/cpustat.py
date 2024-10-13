@@ -8,51 +8,54 @@ from apps.models.cpustat import cpustatLatestType
 
 
 def success() -> str:
+    try:
+        account_name: str = os.environ["StorageAccountName"]
+        account_key: str = os.environ["StorageAccountKey"]
+        container_name: str = os.environ["ContainerName"]
 
-    account_name: str = os.environ["StorageAccountName"]
-    account_key: str = os.environ["StorageAccountKey"]
-    container_name: str = os.environ["ContainerName"]
+        # TODO: Replace <storage-account-name> with your actual storage account name
+        account_url = f"https://{account_name}.blob.core.windows.net"
+        credential = DefaultAzureCredential()
 
-    # TODO: Replace <storage-account-name> with your actual storage account name
-    account_url = f"https://{account_name}.blob.core.windows.net"
-    credential = DefaultAzureCredential()
+        # Create the BlobServiceClient object
+        blob_service_client = BlobServiceClient(
+            account_url, credential=credential)
+        data = list_blobs(blob_service_client, account_name,
+                          account_key, container_name)
 
-    # Create the BlobServiceClient object
-    blob_service_client = BlobServiceClient(account_url, credential=credential)
-    data = list_blobs(blob_service_client, account_name,
-                      account_key, container_name)
+        multiline_string = f"""<b>CPU Server Monitoring - Latest</b>
+        <p>Serving the latest details for CPU servers.</p>"""
 
-    multiline_string = f"""<b>CPU Server Monitoring - Latest</b>
-    <p>Serving the latest details for CPU servers.</p>"""
+        for s in data.servers:
+            multiline_string = multiline_string + "<p>" + s.name
 
-    for s in data.servers:
-        multiline_string = multiline_string + "<p>" + s.name
+            if check_last_updated:
+                multiline_string += """ <span class='online'>●</span><br>"""
+            else:
+                multiline_string += """ <span class='offline'>●</span><br>"""
 
-        if check_last_updated:
-            multiline_string += """ <span class='online'>●</span><br>"""
-        else:
-            multiline_string += """ <span class='offline'>●</span><br>"""
+            multiline_string += "<span class='hst-indent'>- Load: " + \
+                s.load_average+"</span><br>"
+            multiline_string += "<span class='hst-indent'>- Mem: " + \
+                str(int(s.mem_used_pct))+"%</span><br>"
+            multiline_string += "<span class='hst-indent'>- Uptime: " + \
+                s.uptime+"</span><br>"
+            multiline_string += "<span class='hst-indent'>- Procs: " + \
+                str(int(s.running_procs))+"</span><br>"
+            multiline_string += "<span class='hst-indent'>- Platform: " + \
+                s.platform+"</span><br>"
+            multiline_string += "<span class='hst-indent'>- Cores: " + \
+                str(int(s.cpu_core_count))+"</span><br>"
+            if s.cpu_model != "":
+                multiline_string += "<span class='hst-indent'>- " + \
+                    s.cpu_model+"</span><br>"
 
-        multiline_string += "<span class='hst-indent'>- Load: " + \
-            s.load_average+"</span><br>"
-        multiline_string += "<span class='hst-indent'>- Mem: " + \
-            str(int(s.mem_used_pct))+"%</span><br>"
-        multiline_string += "<span class='hst-indent'>- Uptime: " + \
-            s.uptime+"</span><br>"
-        multiline_string += "<span class='hst-indent'>- Procs: " + \
-            str(int(s.running_procs))+"</span><br>"
-        multiline_string += "<span class='hst-indent'>- Platform: " + \
-            s.platform+"</span><br>"
-        multiline_string += "<span class='hst-indent'>- Cores: " + \
-            str(int(s.cpu_core_count))+"</span><br>"
-        if s.cpu_model != "":
-            multiline_string += "<span class='hst-indent'>- " + \
-                s.cpu_model+"</span><br>"
+            multiline_string += "</p>"
 
-        multiline_string += "</p>"
-
-    single_line_string = multiline_string.replace('\n', '<br>')
-    return single_line_string
+        single_line_string = multiline_string.replace('\n', '<br>')
+        return single_line_string
+    except Exception as e:
+        return str(e)
 
 
 def list_blobs(blob_service_client: BlobServiceClient, account_name, account_key, container_name) -> cpustatLatestType:
