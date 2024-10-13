@@ -55,7 +55,7 @@ def success() -> str:
         single_line_string = multiline_string.replace('\n', '<br>')
         return single_line_string
     except Exception as e:
-        return str(e)
+        return str(e).replace('"', "'")
 
 
 def list_blobs(blob_service_client: BlobServiceClient, account_name, account_key, container_name) -> cpustatLatestType:
