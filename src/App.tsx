@@ -128,6 +128,7 @@ function App() {
     } else if (cmd !== "") {
       const response = RunCommand(cmd);
       response.then((data) => {
+        console.log(data.data);
         if (data.responseCode === 404) {
           setHistory((prevHistory) => [...prevHistory, command]);
           setHistory((prevHistory) => [
