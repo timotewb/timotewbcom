@@ -15,6 +15,7 @@ def success() -> str:
 
         # TODO: Replace <storage-account-name> with your actual storage account name
         account_url = f"https://{account_name}.blob.core.windows.net"
+        from azure.identity import DefaultAzureCredential
         credential = DefaultAzureCredential()
 
         # Create the BlobServiceClient object
