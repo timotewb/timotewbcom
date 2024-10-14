@@ -27,12 +27,13 @@ def success() -> str:
     <p>Serving the latest details for CPU servers.</p>"""
 
     for s in data.servers:
-        multiline_string = multiline_string + "<p>" + s.name
+        multiline_string = multiline_string + \
+            "<details><summary>" + s.name
 
         if check_last_updated(s.last_updated):
-            multiline_string += """ <span class='online'>●</span><br>"""
+            multiline_string += """ <span class='online'>●</span></summary>"""
         else:
-            multiline_string += """ <span class='offline'>●</span><br>"""
+            multiline_string += """ <span class='offline'>●</span></summary>"""
 
         multiline_string += "<span class='hst-indent'>- Load: " + \
             s.load_average+"</span><br>"
@@ -52,7 +53,7 @@ def success() -> str:
             multiline_string += "<span class='hst-indent'>- " + \
                 s.cpu_model+"</span><br>"
 
-        multiline_string += "</p>"
+        multiline_string += "</details>"
 
     single_line_string = multiline_string.replace('\n', '<br>')
     return single_line_string
