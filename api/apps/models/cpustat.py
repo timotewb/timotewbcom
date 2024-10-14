@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 class ServerType:
@@ -17,4 +17,4 @@ class ServerType:
 class cpustatLatestType:
     def __init__(self, servers):
         self.servers: list[ServerType] = [ServerType(
-            server['name'], server['platform'], datetime.strptime(server['last_updated'], "%Y-%m-%d %H:%M:%S"), server['load_average'], server['running_procs'], server['uptime'], server['mem_used_pct'], server['cpu_core_count'], server['cpu_model']) for server in servers]
+            server['name'], server['platform'], datetime.strptime(server['last_updated'], "%Y-%m-%d %H:%M:%S").replace(tzinfo=timezone.utc), server['load_average'], server['running_procs'], server['uptime'], server['mem_used_pct'], server['cpu_core_count'], server['cpu_model']) for server in servers]
