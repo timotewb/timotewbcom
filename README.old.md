@@ -61,11 +61,11 @@ with content
 `npm run build ; swa start build --api-location api`<br>
 
 # Docker
-docker build -t timotebw-com . --platform linux/amd64,linux/arm64
-docker run -d -p 3001:3001 timotebw-com
+docker build -t timotewb-com . --platform linux/amd64,linux/arm64
+docker run -d -p 3001:3001 timotewb-com
 docker login
-docker tag timotebw-com:latest timotewb/timotebw-com:latest
-docker push timotewb/timotebw-com:latest
+docker tag timotewb-com:latest timotewb/timotewb-com:latest
+docker push timotewb/timotewb-com:latest
 
 install appwrite
 
