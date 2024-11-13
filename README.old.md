@@ -59,3 +59,14 @@ with content
 2. Create local.settings.json in root and populate
 3. Activate virtual environmnet then run<br>
 `npm run build ; swa start build --api-location api`<br>
+
+# Docker
+docker build -t timotebw-com . --platform linux/amd64,linux/arm64
+docker run -d -p 3001:3001 timotebw-com
+docker login
+docker tag timotebw-com:latest timotewb/timotebw-com:latest
+docker push timotewb/timotebw-com:latest
+
+install appwrite
+
+npm install appwrite
