@@ -4,8 +4,10 @@ interface ApiResponse {
 }
 
 const RunCommand = (command: string): Promise<ApiResponse> => {
+  const apiUrl = process.env.REACT_APP_API_URL;
+  console.log(`API URL: ${apiUrl}`);
   const cmd = parseCommand(command);
-  const url = `/api/${cmd.endpoint}`;
+  const url = `${apiUrl}/${cmd.endpoint}`;
   return callApi(url, cmd.flags);
 };
 

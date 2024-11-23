@@ -69,4 +69,5 @@ docker tag timotewb-com:latest timotewb/timotewb-com:latest
 docker push timotewb/timotewb-com:latest
 
 # install appwrite
+npm install dotenv
 npm install appwrite
