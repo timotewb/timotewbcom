@@ -15,7 +15,7 @@ const runAppwrite = async (cmd: Cmd): Promise<ApiResponse> => {
   const functionID = process.env.REACT_APP_AW_FUNCTION01_ID ?? "";
   const promise = functions.createExecution(
     functionID, // functionId
-    "", // body (optional)
+    cmd.flags, // body (optional)
     false, // async (optional)
     cmd.endpoint, // path (optional)
     ExecutionMethod.GET, // method (optional)
