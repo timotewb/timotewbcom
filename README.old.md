@@ -61,12 +61,20 @@ with content
 `npm run build ; swa start build --api-location api`<br>
 
 # Docker
-create `.env` file in root director with value `PORT=3001`
-docker build -t timotewb-com . --platform linux/amd64,linux/arm64
-docker run -d -p 3001:3001 timotewb-com
-docker login
-docker tag timotewb-com:latest timotewb/timotewb-com:latest
-docker push timotewb/timotewb-com:latest
+1. create `.env` file in root director with values <br>
+`
+PORT=
+REACT_APP_AW_PROJECT_ID=
+ REACT_APP_AW_FUNCTION01_ID=
+`
+2. create docker build<br>
+`docker build -t timotewb-com . --platform linux/amd64,linux/arm64`
+3. run build to test<br>
+`docker run -d -p 3001:3001 timotewb-com`
+4. upload to docker hub<br>
+- `docker login`
+- `docker tag timotewb-com:latest timotewb/timotewb-com:latest`
+- `docker push timotewb/timotewb-com:latest`
 
 # install appwrite
 npm install dotenv
