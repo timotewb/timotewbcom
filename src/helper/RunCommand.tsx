@@ -1,14 +1,39 @@
+import { functions } from "../lib/appwrite";
+import { ExecutionMethod } from "appwrite";
+
 interface ApiResponse {
   data?: string;
   responseCode: number;
 }
 
+interface Cmd {
+  endpoint: string;
+  flags: string;
+}
+
+const runAppwrite = async (cmd: Cmd): Promise<ApiResponse> => {
+  const functionID = process.env.REACT_APP_AW_FUNCTION01_ID ?? "";
+  const promise = functions.createExecution(
+    functionID, // functionId
+    "", // body (optional)
+    false, // async (optional)
+    cmd.endpoint, // path (optional)
+    ExecutionMethod.GET, // method (optional)
+    {} // headers (optional)
+  );
+
+  const result = await promise;
+
+  return {
+    data: result.responseBody || "",
+    responseCode: result.responseStatusCode,
+  };
+};
+
 const RunCommand = (command: string): Promise<ApiResponse> => {
-  const apiUrl = process.env.REACT_APP_API_URL;
-  console.log(`API URL: ${apiUrl}`);
   const cmd = parseCommand(command);
-  const url = `${apiUrl}/${cmd.endpoint}`;
-  return callApi(url, cmd.flags);
+  return runAppwrite(cmd);
+  // return callApi(cmd.endpoint, cmd.flags);
 };
 
 const parseCommand = (command: string): { endpoint: string; flags: string } => {
