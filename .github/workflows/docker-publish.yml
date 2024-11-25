@@ -38,9 +38,9 @@ jobs:
         
       - name: Add .env File
         run: |
-          echo 'PORT=${{ secrets.PORT }}' | tee -a /home/runner/work/timotewbcom/timotewbcom/.env
-          echo 'REACT_APP_AW_FUNCTION01_ID=${{ secrets.REACT_APP_AW_FUNCTION01_ID }}' | tee -a /home/runner/work/timotewbcom/timotewbcom/.env
-          echo 'REACT_APP_AW_PROJECT_ID=${{ secrets.REACT_APP_AW_PROJECT_ID }}' | tee -a /home/runner/work/timotewbcom/timotewbcom/.env
+          echo 'PORT=${{ secrets.PORT }}' | tee -a .env
+          echo 'REACT_APP_AW_FUNCTION01_ID=${{ secrets.REACT_APP_AW_FUNCTION01_ID }}' | tee -a .env
+          echo 'REACT_APP_AW_PROJECT_ID=${{ secrets.REACT_APP_AW_PROJECT_ID }}' | tee -a .env
 
       # Install the cosign tool except on PR
       # https://github.com/sigstore/cosign-installer
