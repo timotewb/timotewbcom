@@ -1,0 +1,24 @@
+services:
+  traefik:
+    image: traefik:v3.1
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker"
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+  timotewbcom:
+    image: ghcr.io/timotewb/timotewbcom:vps-prod
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.timotewbcom.rule=Host(`*`)"
+      - "traefik.http.routers.timotewbcom.entrypoints=websecure"
+      - "com.centurylinklabs.watchtower.enable=true"
+    ports:
+      - "3001:3001"
+    deploy:
+      mode: replicated
+      replicas: 3
+    restart: always
