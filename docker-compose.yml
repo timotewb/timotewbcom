@@ -1,5 +1,5 @@
 services:
-  traefik:
+  reverse-proxy:
     image: traefik:v3.1
     command:
       - "--api.insecure=true"
@@ -11,14 +11,11 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
   timotewbcom:
     image: ghcr.io/timotewb/timotewbcom:vps-prod
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: on-failure
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.timotewbcom.rule=Host(`*`)"
-      - "traefik.http.routers.timotewbcom.entrypoints=websecure"
-      - "com.centurylinklabs.watchtower.enable=true"
-    ports:
-      - "3001:3001"
-    deploy:
-      mode: replicated
-      replicas: 3
-    restart: always
+      - "traefik.http.routers.timotewbcom.rule=PathPrefix(`/`)"
+      - "traefik.http.services.timotewbcom.loadbalancer.server.port=3001"
