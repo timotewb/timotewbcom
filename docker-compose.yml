@@ -1,5 +1,14 @@
 services:
-  reverse-proxy:
+  watchtower:
+    image: containrrr/watchtower
+    command:
+      - "--label-enable"
+      - "--interval"
+      - "30"
+      - "--rolling-restart"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+  traefik:
     image: traefik:v3.1
     command:
       - "--api.insecure=true"
@@ -19,3 +28,4 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.timotewbcom.rule=PathPrefix(`/`)"
       - "traefik.http.services.timotewbcom.loadbalancer.server.port=3001"
+      - "com.centurylinklabs.watchtower.enable=true"
