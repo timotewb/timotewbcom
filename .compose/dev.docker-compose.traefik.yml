@@ -11,6 +11,7 @@ services:
     container_name: appwrite-traefik
     <<: *x-logging
     command:
+      - --api.insecure=true
       - --providers.file.directory=/storage/config
       - --providers.file.watch=true
       - --providers.docker=true
@@ -18,11 +19,12 @@ services:
       - --entrypoints.web.address=:80
       - --entrypoints.websecure.address=:443
       - --certificatesresolvers.myresolver.acme.tlschallenge=true
-      - --certificatesresolvers.myresolver.acme.email=UPDATEME@email.com
+      - --certificatesresolvers.myresolver.acme.email=email@email.com
       - --certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json
     restart: unless-stopped
     ports:
       - 80:80
+      - 8080:8080
       - 443:443
     volumes:
       - letsencrypt:/letsencrypt

@@ -3,7 +3,7 @@ services:
   timotewbcom:
     image: ghcr.io/timotewb/timotewbcom:vps-prod
     deploy:
-      replicas: 3
+      replicas: 1
       restart_policy:
         condition: on-failure
     labels:
@@ -11,11 +11,11 @@ services:
       - traefik.http.services.timotewbcom.loadbalancer.server.port=3001
       #http
       - traefik.http.routers.timotewbcom_http.entrypoints=web
-      - traefik.http.routers.timotewbcom_http.rule=PathPrefix(`UPDATEME`)
+      - traefik.http.routers.timotewbcom_http.rule=PathPrefix(`/`)
       - traefik.http.routers.timotewbcom_http.service=timotewbcom
       # https
       - traefik.http.routers.timotewbcom_https.entrypoints=websecure
-      - traefik.http.routers.timotewbcom_https.rule=PathPrefix(`UPDATEME`)
+      - traefik.http.routers.timotewbcom_https.rule=PathPrefix(`/`)
       - traefik.http.routers.timotewbcom_https.service=timotewbcom
       - traefik.http.routers.timotewbcom_https.tls=true
       # certificates
