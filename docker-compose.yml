@@ -11,6 +11,7 @@ services:
   traefik:
     image: traefik:v3.1
     command:
+      - "--api.insecure=true"
       - "--providers.docker"
       - "--providers.docker.exposedbydefault=false"
       - "--entryPoints.websecure.address=:443"
@@ -22,6 +23,7 @@ services:
       - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
     ports:
       - "80:80"
+      - "8080:8080"
       - "443:443"
     volumes:
       - letsencrypt:/letsencrypt
@@ -29,7 +31,7 @@ services:
   timotewbcom:
     image: ghcr.io/timotewb/timotewbcom:vps-prod
     deploy:
-      replicas: 3
+      replicas: 1
       restart_policy:
         condition: on-failure
     labels:
