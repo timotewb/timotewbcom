@@ -9,11 +9,11 @@ on:
   schedule:
     - cron: '44 9 * * *'
   push:
-    branches: [ "vps-prod" ]
+    branches: [ "vps-dev" ]
     # Publish semver tags as releases.
     tags: [ 'v*.*.*' ]
   pull_request:
-    branches: [ "vps-prod" ]
+    branches: [ "vps-dev" ]
 
 env:
   # Use docker.io for Docker Hub if empty
@@ -38,9 +38,9 @@ jobs:
         
       - name: Add .env File
         run: |
-          echo 'PORT=${{ secrets.PORT }}' | tee -a .env
-          echo 'REACT_APP_AW_FUNCTION01_ID=${{ secrets.REACT_APP_AW_FUNCTION01_ID }}' | tee -a .env
-          echo 'REACT_APP_AW_PROJECT_ID=${{ secrets.REACT_APP_AW_PROJECT_ID }}' | tee -a .env
+          echo 'REACT_APP_AW_FUNCTION01_ID=${{ secrets.DEV_REACT_APP_AW_FUNCTION01_ID }}' | tee -a .env
+          echo 'REACT_APP_AW_PROJECT_ID=${{ secrets.DEV_REACT_APP_AW_PROJECT_ID }}' | tee -a .env
+          echo 'REACT_APP_AW_URL_ENDPOINT=${{ secrets.DEV_REACT_APP_AW_URL_ENDPOINT }}' | tee -a .env
 
       # Install the cosign tool except on PR
       # https://github.com/sigstore/cosign-installer
