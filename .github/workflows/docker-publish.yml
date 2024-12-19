@@ -1,4 +1,4 @@
-name: Docker
+name: Build timotewb.com web app
 
 # This workflow uses actions that are not certified by GitHub.
 # They are provided by a third-party and are governed by
@@ -39,10 +39,12 @@ jobs:
       - name: Add .env File
         run: |
             if [[ "${{ github.ref_name }}" == "vps-dev" ]]; then
+              echo 'Building vps-dev'
               echo 'REACT_APP_AW_FUNCTION01_ID=${{ secrets.DEV_REACT_APP_AW_FUNCTION01_ID }}' | tee -a .env
               echo 'REACT_APP_AW_PROJECT_ID=${{ secrets.DEV_REACT_APP_AW_PROJECT_ID }}' | tee -a .env
               echo 'REACT_APP_AW_URL_ENDPOINT=${{ secrets.DEV_REACT_APP_AW_URL_ENDPOINT }}' | tee -a .env
             elif [[ "${{ github.ref_name }}" == "vps-prod" ]]; then
+              echo 'Building vps-prod'
               echo 'REACT_APP_AW_FUNCTION01_ID=${{ secrets.REACT_APP_AW_FUNCTION01_ID }}' | tee -a .env
               echo 'REACT_APP_AW_PROJECT_ID=${{ secrets.REACT_APP_AW_PROJECT_ID }}' | tee -a .env
               echo 'REACT_APP_AW_URL_ENDPOINT=${{ secrets.REACT_APP_AW_URL_ENDPOINT }}' | tee -a .env
